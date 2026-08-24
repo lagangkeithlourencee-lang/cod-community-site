@@ -62,5 +62,52 @@
 
   <p id="responseMessage" style="margin-top: 15px; font-weight: bold;"></p>
 </section>
+  <script>
+  document.getElementById('joinForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('playerName').value;
+    const activision = document.getElementById('activisionId').value;
+    const discord = document.getElementById('discordTag').value;
+    const msg = document.getElementById('responseMessage');
+
+    msg.innerText = "Sending application...";
+
+    // PASTE YOUR DISCORD WEBHOOK URL BELOW INSIDE THE QUOTES
+    const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+
+    const payload = {
+      embeds: [{
+        title: "🪖 New COD Clan Application!",
+        color: 16733696,
+        fields: [
+          { name: "Gamer Tag", value: name, inline: true },
+          { name: "Activision ID", value: activision, inline: true },
+          { name: "Discord Tag", value: discord, inline: true }
+        ],
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        msg.style.color = "#00ff00";
+        msg.innerText = "Application submitted successfully!";
+        document.getElementById('joinForm').reset();
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      msg.style.color = "#ff0000";
+      msg.innerText = "Failed to submit. Please try again.";
+    }
+  });
+</script>
 </body>
 </html>
