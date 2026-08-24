@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CODM Community Hub</title>
+  <title>TF141 — CODM Community Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
@@ -96,7 +96,6 @@
       </h2>
 
       <div class="grid gap-4 md:grid-cols-2">
-        <!-- Event Card 1 -->
         <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg">
           <div class="flex justify-between items-start mb-2">
             <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded">5v5 MP Scrim</span>
@@ -107,7 +106,6 @@
           <div class="text-xs font-semibold text-slate-300">Lineup: <span class="text-amber-400">Ghost, Soap, Price, Gaz + 1 Sub</span></div>
         </div>
 
-        <!-- Event Card 2 -->
         <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg">
           <div class="flex justify-between items-start mb-2">
             <span class="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">Battle Royale</span>
@@ -128,7 +126,6 @@
         🔥 CODM Meta Gunsmith Builds
       </h2>
       
-      <!-- Weapon Card 1 -->
       <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg mb-4 flex justify-between items-center flex-wrap gap-4">
         <div>
           <h3 class="text-lg font-bold text-white">BP50 — Meta Assault Rifle</h3>
@@ -144,7 +141,6 @@
         </button>
       </div>
 
-      <!-- Weapon Card 2 -->
       <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex justify-between items-center flex-wrap gap-4">
         <div>
           <h3 class="text-lg font-bold text-white">DR-H — Ranked MP Build</h3>
@@ -193,8 +189,8 @@
           </select>
         </div>
 
-        <!-- Turnstile Widget (Replace with your actual sitekey) -->
-        <div class="cf-turnstile my-4" data-sitekey="0x4AAAAAAABcDeFgHiJkLmNo"></div>
+        <!-- Turnstile Widget (Replace YOUR_TURNSTILE_SITE_KEY_HERE with your real key) -->
+        <div class="cf-turnstile my-4" data-sitekey="YOUR_TURNSTILE_SITE_KEY_HERE"></div>
 
         <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg transition">
           Submit Application
@@ -205,7 +201,7 @@
     </div>
   </section>
 
- <!-- Footer Section -->
+  <!-- Footer Section -->
   <footer class="border-t border-slate-800 bg-slate-900/50 py-8 px-6 text-center text-xs text-slate-500 mt-auto">
     <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
@@ -213,7 +209,6 @@
         <p class="mt-1">Not affiliated with or endorsed by Activision or TiMi Studio Group.</p>
       </div>
 
-      <!-- Quick Links & Socials -->
       <div class="flex items-center space-x-4 font-semibold text-slate-400">
         <a href="https://discord.gg" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1">
           <span>💬 Discord</span>
@@ -232,72 +227,62 @@
       navigator.clipboard.writeText(code);
       alert("Gunsmith code copied: " + code);
     }
-    // ... remaining JavaScript code ...
-  </script>
 
-</body>
-</html>
-
-   document.getElementById('joinForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  
-  const name = document.getElementById('playerName').value;
-  const uid = document.getElementById('characterUid').value;
-  const discord = document.getElementById('discordTag').value;
-  const device = document.getElementById('deviceType').value;
-  const msg = document.getElementById('responseMessage');
-
-  // 1. Get the Turnstile token response
-  const turnstileResponse = turnstile.getResponse();
-
-  // 2. Validate that the user completed the Turnstile check
-  if (!turnstileResponse) {
-    msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
-    msg.innerText = "Please complete the security check before submitting.";
-    return;
-  }
-
-  msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
-  msg.innerText = "Sending application...";
-
-  const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
-
-  const payload = {
-    embeds: [{
-      title: "📱 New CODM Clan Application!",
-      color: 16733696,
-      fields: [
-        { name: "IGN", value: name, inline: true },
-        { name: "Character UID", value: uid, inline: true },
-        { name: "Discord", value: discord, inline: true },
-        { name: "Device", value: device, inline: true }
-      ],
-      timestamp: new Date().toISOString()
-    }]
-  };
-
-  try {
-    const res = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
-      msg.innerText = "Application submitted successfully!";
-      document.getElementById('joinForm').reset();
+    document.getElementById('joinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
       
-      // Reset Turnstile widget for future submissions
-      turnstile.reset();
-    } else {
-      throw new Error();
-    }
-  } catch (err) {
-    msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
-    msg.innerText = "Failed to submit. Please try again.";
-  }
-});
+      const name = document.getElementById('playerName').value;
+      const uid = document.getElementById('characterUid').value;
+      const discord = document.getElementById('discordTag').value;
+      const device = document.getElementById('deviceType').value;
+      const msg = document.getElementById('responseMessage');
+
+      const turnstileResponse = turnstile.getResponse();
+      if (!turnstileResponse) {
+        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+        msg.innerText = "Please complete the security check before submitting.";
+        return;
+      }
+
+      msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
+      msg.innerText = "Sending application...";
+
+      const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+
+      const payload = {
+        embeds: [{
+          title: "📱 New CODM Clan Application!",
+          color: 16733696,
+          fields: [
+            { name: "IGN", value: name, inline: true },
+            { name: "Character UID", value: uid, inline: true },
+            { name: "Discord", value: discord, inline: true },
+            { name: "Device", value: device, inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
+          msg.innerText = "Application submitted successfully!";
+          document.getElementById('joinForm').reset();
+          turnstile.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+        msg.innerText = "Failed to submit. Please try again.";
+      }
+    });
   </script>
 
 </body>
