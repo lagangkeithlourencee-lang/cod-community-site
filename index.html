@@ -3,10 +3,287 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TF141 CODM</title>
+  <title>TF141 — CODM Community Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center">
-  <h1 class="text-3xl font-bold text-amber-500">TF141 Site Active</h1>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Navigation -->
+  <nav class="border-b border-slate-800 bg-slate-900/80 px-6 py-4 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md">
+    <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CODM</div>
+    <div class="space-x-6 text-sm font-semibold">
+      <a href="#" class="hover:text-amber-400 transition">Home</a>
+      <a href="#roster" class="hover:text-amber-400 transition">Roster</a>
+      <a href="#events" class="hover:text-amber-400 transition">Events</a>
+      <a href="#loadouts" class="hover:text-amber-400 transition">Meta Gunsmith</a>
+      <a href="#apply" class="hover:text-amber-400 transition">Apply</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="flex-1 max-w-4xl mx-auto px-6 py-16 text-center flex flex-col items-center justify-center">
+    <span class="bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-widest mb-4">
+      Recruiting CODM MP & BR Players
+    </span>
+    <h1 class="text-5xl font-black uppercase text-white tracking-tight">
+      Dominate Mobile <span class="text-amber-500">With Us</span>
+    </h1>
+    <p class="mt-4 text-slate-400 max-w-lg">
+      Welcome to our Call of Duty: Mobile clan hub. Check out our active squad roster, copy top meta Gunsmith builds, and submit an application to join.
+    </p>
+    <div class="mt-8 flex gap-4">
+      <a href="#apply" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-6 py-3 rounded-lg font-bold transition">
+        Apply To Join
+      </a>
+    </div>
+  </main>
+
+  <!-- Clan Roster Section -->
+  <section id="roster" class="max-w-3xl mx-auto w-full px-6 py-10">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center justify-between">
+        <span>🛡️ Active CODM Roster</span>
+        <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-semibold">4 Members</span>
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-xs uppercase text-slate-400">
+              <th class="py-3 px-2">IGN</th>
+              <th class="py-3 px-2">Character UID</th>
+              <th class="py-3 px-2">Role</th>
+              <th class="py-3 px-2">Device</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50 text-sm">
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Ghost_CODM</td>
+              <td class="py-3 px-2 text-slate-400">674918239012384712</td>
+              <td class="py-3 px-2"><span class="bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">Leader</span></td>
+              <td class="py-3 px-2 text-slate-300">iOS (iPad)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Soap_MBL</td>
+              <td class="py-3 px-2 text-slate-400">682910394810293847</td>
+              <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
+              <td class="py-3 px-2 text-slate-300">Android</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Price_Sniper</td>
+              <td class="py-3 px-2 text-slate-400">691820394810293812</td>
+              <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
+              <td class="py-3 px-2 text-slate-300">iOS</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Gaz_Slayer</td>
+              <td class="py-3 px-2 text-slate-400">671920394819283746</td>
+              <td class="py-3 px-2"><span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded font-bold">Member</span></td>
+              <td class="py-3 px-2 text-slate-300">Gameloop</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events & Scrims Schedule -->
+  <section id="events" class="max-w-3xl mx-auto w-full px-6 py-10">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center justify-between">
+        <span>📅 Upcoming Scrims & Tournaments</span>
+      </h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg">
+          <div class="flex justify-between items-start mb-2">
+            <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded">5v5 MP Scrim</span>
+            <span class="text-xs text-slate-400">Saturday @ 8:00 PM</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-1">Weekly Clan War</h3>
+          <p class="text-xs text-slate-400 mb-3">Modes: Hardpoint & Search and Destroy against rival clan.</p>
+          <div class="text-xs font-semibold text-slate-300">Lineup: <span class="text-amber-400">Ghost, Soap, Price, Gaz + 1 Sub</span></div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg">
+          <div class="flex justify-between items-start mb-2">
+            <span class="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded">Battle Royale</span>
+            <span class="text-xs text-slate-400">Sunday @ 9:00 PM</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-1">Isolated Squad Push</h3>
+          <p class="text-xs text-slate-400 mb-3">Ranked BR lobby grind to reach Legendary rank.</p>
+          <div class="text-xs font-semibold text-slate-300">Open Slots: <span class="text-emerald-400">2 Available</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CODM Meta Gunsmith Section -->
+  <section id="loadouts" class="max-w-3xl mx-auto w-full px-6 py-10">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
+        🔥 CODM Meta Gunsmith Builds
+      </h2>
+      
+      <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg mb-4 flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">BP50 — Meta Assault Rifle</h3>
+          <p class="text-sm text-slate-400 mt-1">
+            <strong class="text-slate-200">Muzzle:</strong> Agency Suppressor | 
+            <strong class="text-slate-200">Barrel:</strong> Leroy 438mm | 
+            <strong class="text-slate-200">Stock:</strong> Removal Stock | 
+            <strong class="text-slate-200">Ammo:</strong> 60 Round Mag
+          </p>
+        </div>
+        <button onclick="copyCode('BP50-1B2C3D')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Share Code
+        </button>
+      </div>
+
+      <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">DR-H — Ranked MP Build</h3>
+          <p class="text-sm text-slate-400 mt-1">
+            <strong class="text-slate-200">Muzzle:</strong> Monolithic Suppressor | 
+            <strong class="text-slate-200">Barrel:</strong> OWC Marksman | 
+            <strong class="text-slate-200">Stock:</strong> No Stock | 
+            <strong class="text-slate-200">Ammo:</strong> 25 Round OTM Mag
+          </p>
+        </div>
+        <button onclick="copyCode('DRH-4E5F6G')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Share Code
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Clan Join Application Form -->
+  <section id="apply" class="max-w-xl mx-auto w-full px-6 py-10 mb-12">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-white mb-6">Join Our CODM Clan</h2>
+      
+      <form id="joinForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">In-Game Name (IGN):</label>
+          <input type="text" id="playerName" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">CODM Character UID (18 digits):</label>
+          <input type="text" id="characterUid" required placeholder="e.g. 674918239012384712" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Discord Username:</label>
+          <input type="text" id="discordTag" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Playing Device:</label>
+          <select id="deviceType" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+            <option value="Android Phone">Android Phone</option>
+            <option value="iOS (iPhone)">iOS (iPhone)</option>
+            <option value="iPad / Tablet">iPad / Tablet</option>
+            <option value="PC Emulator (Gameloop)">PC Emulator (Gameloop)</option>
+          </select>
+        </div>
+
+        <!-- Turnstile Widget (Replace YOUR_TURNSTILE_SITE_KEY_HERE with your real key) -->
+        <div class="cf-turnstile my-4" data-sitekey="YOUR_TURNSTILE_SITE_KEY_HERE"></div>
+
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg transition">
+          Submit Application
+        </button>
+      </form>
+
+      <p id="responseMessage" class="mt-4 font-bold text-sm text-center"></p>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="border-t border-slate-800 bg-slate-900/50 py-8 px-6 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <p class="font-bold text-slate-400">Task Force 141 — Call of Duty: Mobile Clan</p>
+        <p class="mt-1">Not affiliated with or endorsed by Activision or TiMi Studio Group.</p>
+      </div>
+
+      <div class="flex items-center space-x-4 font-semibold text-slate-400">
+        <a href="https://discord.gg" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1">
+          <span>💬 Discord</span>
+        </a>
+        <a href="https://youtube.com" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1">
+          <span>📺 YouTube</span>
+        </a>
+        <a href="#" class="hover:text-amber-400 transition">⬆️ Top</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    function copyCode(code) {
+      navigator.clipboard.writeText(code);
+      alert("Gunsmith code copied: " + code);
+    }
+
+    document.getElementById('joinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('playerName').value;
+      const uid = document.getElementById('characterUid').value;
+      const discord = document.getElementById('discordTag').value;
+      const device = document.getElementById('deviceType').value;
+      const msg = document.getElementById('responseMessage');
+
+      const turnstileResponse = turnstile.getResponse();
+      if (!turnstileResponse) {
+        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+        msg.innerText = "Please complete the security check before submitting.";
+        return;
+      }
+
+      msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
+      msg.innerText = "Sending application...";
+
+      const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+
+      const payload = {
+        embeds: [{
+          title: "📱 New CODM Clan Application!",
+          color: 16733696,
+          fields: [
+            { name: "IGN", value: name, inline: true },
+            { name: "Character UID", value: uid, inline: true },
+            { name: "Discord", value: discord, inline: true },
+            { name: "Device", value: device, inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
+          msg.innerText = "Application submitted successfully!";
+          document.getElementById('joinForm').reset();
+          turnstile.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+        msg.innerText = "Failed to submit. Please try again.";
+      }
+    });
+  </script>
+
 </body>
 </html>
