@@ -238,53 +238,66 @@
 </body>
 </html>
 
-    document.getElementById('joinForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const name = document.getElementById('playerName').value;
-      const uid = document.getElementById('characterUid').value;
-      const discord = document.getElementById('discordTag').value;
-      const device = document.getElementById('deviceType').value;
-      const msg = document.getElementById('responseMessage');
+   document.getElementById('joinForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('playerName').value;
+  const uid = document.getElementById('characterUid').value;
+  const discord = document.getElementById('discordTag').value;
+  const device = document.getElementById('deviceType').value;
+  const msg = document.getElementById('responseMessage');
 
-      msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
-      msg.innerText = "Sending application...";
+  // 1. Get the Turnstile token response
+  const turnstileResponse = turnstile.getResponse();
 
-      const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+  // 2. Validate that the user completed the Turnstile check
+  if (!turnstileResponse) {
+    msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+    msg.innerText = "Please complete the security check before submitting.";
+    return;
+  }
 
-      const payload = {
-        embeds: [{
-          title: "📱 New CODM Clan Application!",
-          color: 16733696,
-          fields: [
-            { name: "IGN", value: name, inline: true },
-            { name: "Character UID", value: uid, inline: true },
-            { name: "Discord", value: discord, inline: true },
-            { name: "Device", value: device, inline: true }
-          ],
-          timestamp: new Date().toISOString()
-        }]
-      };
+  msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
+  msg.innerText = "Sending application...";
 
-      try {
-        const res = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+  const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
 
-        if (res.ok) {
-          msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
-          msg.innerText = "Application submitted successfully!";
-          document.getElementById('joinForm').reset();
-        } else {
-          throw new Error();
-        }
-      } catch (err) {
-        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
-        msg.innerText = "Failed to submit. Please try again.";
-      }
+  const payload = {
+    embeds: [{
+      title: "📱 New CODM Clan Application!",
+      color: 16733696,
+      fields: [
+        { name: "IGN", value: name, inline: true },
+        { name: "Character UID", value: uid, inline: true },
+        { name: "Discord", value: discord, inline: true },
+        { name: "Device", value: device, inline: true }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+
+    if (res.ok) {
+      msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
+      msg.innerText = "Application submitted successfully!";
+      document.getElementById('joinForm').reset();
+      
+      // Reset Turnstile widget for future submissions
+      turnstile.reset();
+    } else {
+      throw new Error();
+    }
+  } catch (err) {
+    msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+    msg.innerText = "Failed to submit. Please try again.";
+  }
+});
   </script>
 
 </body>
