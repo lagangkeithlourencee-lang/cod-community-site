@@ -10,14 +10,14 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
   <!-- Navigation -->
-  <nav class="border-b border-slate-800 bg-slate-900/80 px-6 py-4 flex justify-between items-center">
+  <nav class="border-b border-slate-800 bg-slate-900/80 px-6 py-4 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md">
     <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CODM</div>
     <div class="space-x-6 text-sm font-semibold">
-      <a href="#" class="hover:text-amber-400">Home</a>
-      <a href="#roster" class="hover:text-amber-400">Roster</a>
-      <a href="#events" class="hover:text-amber-400">Events</a>
-      <a href="#loadouts" class="hover:text-amber-400">Meta Gunsmith</a>
-      <a href="#apply" class="hover:text-amber-400">Apply</a>
+      <a href="#" class="hover:text-amber-400 transition">Home</a>
+      <a href="#roster" class="hover:text-amber-400 transition">Roster</a>
+      <a href="#events" class="hover:text-amber-400 transition">Events</a>
+      <a href="#loadouts" class="hover:text-amber-400 transition">Meta Gunsmith</a>
+      <a href="#apply" class="hover:text-amber-400 transition">Apply</a>
     </div>
   </nav>
 
@@ -88,7 +88,6 @@
     </div>
   </section>
 
-  <!-- CODM Meta Gunsmith Section -->
   <!-- Events & Scrims Schedule -->
   <section id="events" class="max-w-3xl mx-auto w-full px-6 py-10">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
@@ -121,6 +120,8 @@
       </div>
     </div>
   </section>
+
+  <!-- CODM Meta Gunsmith Section -->
   <section id="loadouts" class="max-w-3xl mx-auto w-full px-6 py-10">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
       <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
