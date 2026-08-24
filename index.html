@@ -13,101 +13,155 @@
     <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CLAN</div>
     <div class="space-x-6 text-sm font-semibold">
       <a href="#" class="hover:text-amber-400">Home</a>
-      <a href="#" class="hover:text-amber-400">Roster</a>
-      <a href="#" class="hover:text-amber-400">Apply</a>
+      <a href="#loadouts" class="hover:text-amber-400">Loadouts</a>
+      <a href="#apply" class="hover:text-amber-400">Apply</a>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <main class="flex-1 max-w-4xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center">
+  <main class="flex-1 max-w-4xl mx-auto px-6 py-16 text-center flex flex-col items-center justify-center">
     <span class="bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-widest mb-4">
       Recruiting Active Players
     </span>
-    <h1 className="text-5xl font-black uppercase text-white tracking-tight">
+    <h1 class="text-5xl font-black uppercase text-white tracking-tight">
       Dominate The Battlefield <span class="text-amber-500">With Us</span>
     </h1>
     <p class="mt-4 text-slate-400 max-w-lg">
       Welcome to our Call of Duty community hub. View our active roster, share meta weapon loadouts, and join our squad.
     </p>
     <div class="mt-8 flex gap-4">
-      <a href="#" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-6 py-3 rounded-lg font-bold transition">
+      <a href="#apply" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-6 py-3 rounded-lg font-bold transition">
         Apply To Join
       </a>
     </div>
   </main>
-<!-- Clan Join Application Form -->
-<section style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: sans-serif; background: #111; color: #fff; border-radius: 8px;">
-  <h2>Join Our Call of Duty Clan</h2>
-  
-  <form id="joinForm">
-    <div style="margin-bottom: 15px;">
-      <label>Your Name / Gamer Tag:</label><br>
-      <input type="text" id="playerName" required style="width: 100%; padding: 8px; margin-top: 5px;">
+
+  <!-- Meta Loadout Builder Section -->
+  <section id="loadouts" class="max-w-3xl mx-auto w-full px-6 py-10">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
+        🔥 Community Meta Loadouts
+      </h2>
+      
+      <!-- Weapon Card 1 -->
+      <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg mb-4 flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">MCW — Meta Warzone Build</h3>
+          <p class="text-sm text-slate-400 mt-1">
+            <strong class="text-slate-200">Muzzle:</strong> L4R Flash Hider | 
+            <strong class="text-slate-200">Barrel:</strong> 16.5" MCW Cyclone | 
+            <strong class="text-slate-200">Optic:</strong> JAK Glassless | 
+            <strong class="text-slate-200">Stock:</strong> Regal Heavy Stock
+          </p>
+        </div>
+        <button onclick="copyCode('MCW-9982-WARZONE')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Build Code
+        </button>
+      </div>
+
+      <!-- Weapon Card 2 -->
+      <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">Rival-9 — Ranked SMG</h3>
+          <p class="text-sm text-slate-400 mt-1">
+            <strong class="text-slate-200">Muzzle:</strong> Purifier Muzzle Brake | 
+            <strong class="text-slate-200">Barrel:</strong> Rival-C Clear Shot | 
+            <strong class="text-slate-200">Underbarrel:</strong> DR-6 Handstop | 
+            <strong class="text-slate-200">Rear Grip:</strong> Vice Assault Grip
+          </p>
+        </div>
+        <button onclick="copyCode('RIVAL9-RANKED-01')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Build Code
+        </button>
+      </div>
     </div>
+  </section>
 
-    <div style="margin-bottom: 15px;">
-      <label>Activision ID (e.g. Player#12345):</label><br>
-      <input type="text" id="activisionId" required style="width: 100%; padding: 8px; margin-top: 5px;">
+  <!-- Clan Join Application Form -->
+  <section id="apply" class="max-w-xl mx-auto w-full px-6 py-10 mb-12">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-white mb-6">Join Our Call of Duty Clan</h2>
+      
+      <form id="joinForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Your Name / Gamer Tag:</label>
+          <input type="text" id="playerName" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Activision ID (e.g. Player#12345):</label>
+          <input type="text" id="activisionId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Discord Username:</label>
+          <input type="text" id="discordTag" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg transition">
+          Submit Application
+        </button>
+      </form>
+
+      <p id="responseMessage" class="mt-4 font-bold text-sm text-center"></p>
     </div>
+  </section>
 
-    <div style="margin-bottom: 15px;">
-      <label>Discord Username:</label><br>
-      <input type="text" id="discordTag" required style="width: 100%; padding: 8px; margin-top: 5px;">
-    </div>
-
-    <button type="submit" style="background: #ff5500; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px;">
-      Submit Application
-    </button>
-  </form>
-
-  <p id="responseMessage" style="margin-top: 15px; font-weight: bold;"></p>
-</section>
+  <!-- JavaScript -->
   <script>
-  document.getElementById('joinForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('playerName').value;
-    const activision = document.getElementById('activisionId').value;
-    const discord = document.getElementById('discordTag').value;
-    const msg = document.getElementById('responseMessage');
-
-    msg.innerText = "Sending application...";
-
-    // PASTE YOUR DISCORD WEBHOOK URL BELOW INSIDE THE QUOTES
-    const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
-
-    const payload = {
-      embeds: [{
-        title: "🪖 New COD Clan Application!",
-        color: 16733696,
-        fields: [
-          { name: "Gamer Tag", value: name, inline: true },
-          { name: "Activision ID", value: activision, inline: true },
-          { name: "Discord Tag", value: discord, inline: true }
-        ],
-        timestamp: new Date().toISOString()
-      }]
-    };
-
-    try {
-      const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        msg.style.color = "#00ff00";
-        msg.innerText = "Application submitted successfully!";
-        document.getElementById('joinForm').reset();
-      } else {
-        throw new Error();
-      }
-    } catch (err) {
-      msg.style.color = "#ff0000";
-      msg.innerText = "Failed to submit. Please try again.";
+    // Copy build code function
+    function copyCode(code) {
+      navigator.clipboard.writeText(code);
+      alert("Loadout code copied: " + code);
     }
-  });
-</script>
+
+    // Form submission function
+    document.getElementById('joinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('playerName').value;
+      const activision = document.getElementById('activisionId').value;
+      const discord = document.getElementById('discordTag').value;
+      const msg = document.getElementById('responseMessage');
+
+      msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
+      msg.innerText = "Sending application...";
+
+      const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+
+      const payload = {
+        embeds: [{
+          title: "🪖 New COD Clan Application!",
+          color: 16733696,
+          fields: [
+            { name: "Gamer Tag", value: name, inline: true },
+            { name: "Activision ID", value: activision, inline: true },
+            { name: "Discord Tag", value: discord, inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          msg.className = "mt-4 font-bold text-sm text-center text-emerald-400";
+          msg.innerText = "Application submitted successfully!";
+          document.getElementById('joinForm').reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        msg.className = "mt-4 font-bold text-sm text-center text-rose-500";
+        msg.innerText = "Failed to submit. Please try again.";
+      }
+    });
+  </script>
+
 </body>
 </html>
