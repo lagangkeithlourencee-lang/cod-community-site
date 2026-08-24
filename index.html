@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Call of Duty Community</title>
+  <title>CODM Community Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-<!-- Navigation -->
+  <!-- Navigation -->
   <nav class="border-b border-slate-800 bg-slate-900/80 px-6 py-4 flex justify-between items-center">
-    <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CLAN</div>
+    <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CODM</div>
     <div class="space-x-6 text-sm font-semibold">
       <a href="#" class="hover:text-amber-400">Home</a>
       <a href="#roster" class="hover:text-amber-400">Roster</a>
-      <a href="#loadouts" class="hover:text-amber-400">Loadouts</a>
+      <a href="#loadouts" class="hover:text-amber-400">Meta Gunsmith</a>
       <a href="#apply" class="hover:text-amber-400">Apply</a>
     </div>
   </nav>
@@ -22,13 +23,13 @@
   <!-- Hero Section -->
   <main class="flex-1 max-w-4xl mx-auto px-6 py-16 text-center flex flex-col items-center justify-center">
     <span class="bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-widest mb-4">
-      Recruiting Active Players
+      Recruiting CODM MP & BR Players
     </span>
     <h1 class="text-5xl font-black uppercase text-white tracking-tight">
-      Dominate The Battlefield <span class="text-amber-500">With Us</span>
+      Dominate Mobile <span class="text-amber-500">With Us</span>
     </h1>
     <p class="mt-4 text-slate-400 max-w-lg">
-      Welcome to our Call of Duty community hub. View our active roster, share meta weapon loadouts, and join our squad.
+      Welcome to our Call of Duty: Mobile clan hub. Check out our active squad roster, copy top meta Gunsmith builds, and submit an application to join.
     </p>
     <div class="mt-8 flex gap-4">
       <a href="#apply" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-6 py-3 rounded-lg font-bold transition">
@@ -37,12 +38,11 @@
     </div>
   </main>
 
-  <!-- Meta Loadout Builder Section -->
   <!-- Clan Roster Section -->
   <section id="roster" class="max-w-3xl mx-auto w-full px-6 py-10">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
       <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center justify-between">
-        <span>🛡️ Active Clan Roster</span>
+        <span>🛡️ Active CODM Roster</span>
         <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-semibold">4 Members</span>
       </h2>
 
@@ -50,77 +50,79 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-800 text-xs uppercase text-slate-400">
-              <th class="py-3 px-2">Player</th>
-              <th class="py-3 px-2">Activision ID</th>
+              <th class="py-3 px-2">IGN</th>
+              <th class="py-3 px-2">Character UID</th>
               <th class="py-3 px-2">Role</th>
-              <th class="py-3 px-2">Platform</th>
+              <th class="py-3 px-2">Device</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/50 text-sm">
             <tr>
-              <td class="py-3 px-2 font-bold text-white">Ghost</td>
-              <td class="py-3 px-2 text-slate-400">Ghost#11411</td>
+              <td class="py-3 px-2 font-bold text-white">Ghost_CODM</td>
+              <td class="py-3 px-2 text-slate-400">674918239012384712</td>
               <td class="py-3 px-2"><span class="bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">Leader</span></td>
-              <td class="py-3 px-2 text-slate-300">PC</td>
+              <td class="py-3 px-2 text-slate-300">iOS (iPad)</td>
             </tr>
             <tr>
-              <td class="py-3 px-2 font-bold text-white">Soap</td>
-              <td class="py-3 px-2 text-slate-400">Soap#22890</td>
+              <td class="py-3 px-2 font-bold text-white">Soap_MBL</td>
+              <td class="py-3 px-2 text-slate-400">682910394810293847</td>
               <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
-              <td class="py-3 px-2 text-slate-300">PS5</td>
+              <td class="py-3 px-2 text-slate-300">Android</td>
             </tr>
             <tr>
-              <td class="py-3 px-2 font-bold text-white">Price</td>
-              <td class="py-3 px-2 text-slate-400">Price#00001</td>
+              <td class="py-3 px-2 font-bold text-white">Price_Sniper</td>
+              <td class="py-3 px-2 text-slate-400">691820394810293812</td>
               <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
-              <td class="py-3 px-2 text-slate-300">PC</td>
+              <td class="py-3 px-2 text-slate-300">iOS</td>
             </tr>
             <tr>
-              <td class="py-3 px-2 font-bold text-white">Gaz</td>
-              <td class="py-3 px-2 text-slate-400">Gaz#99102</td>
+              <td class="py-3 px-2 font-bold text-white">Gaz_Slayer</td>
+              <td class="py-3 px-2 text-slate-400">671920394819283746</td>
               <td class="py-3 px-2"><span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded font-bold">Member</span></td>
-              <td class="py-3 px-2 text-slate-300">Xbox</td>
+              <td class="py-3 px-2 text-slate-300">Gameloop</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
+
+  <!-- CODM Meta Gunsmith Section -->
   <section id="loadouts" class="max-w-3xl mx-auto w-full px-6 py-10">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
       <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
-        🔥 Community Meta Loadouts
+        🔥 CODM Meta Gunsmith Builds
       </h2>
       
       <!-- Weapon Card 1 -->
       <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg mb-4 flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h3 class="text-lg font-bold text-white">MCW — Meta Warzone Build</h3>
+          <h3 class="text-lg font-bold text-white">BP50 — Meta Assault Rifle</h3>
           <p class="text-sm text-slate-400 mt-1">
-            <strong class="text-slate-200">Muzzle:</strong> L4R Flash Hider | 
-            <strong class="text-slate-200">Barrel:</strong> 16.5" MCW Cyclone | 
-            <strong class="text-slate-200">Optic:</strong> JAK Glassless | 
-            <strong class="text-slate-200">Stock:</strong> Regal Heavy Stock
+            <strong class="text-slate-200">Muzzle:</strong> Agency Suppressor | 
+            <strong class="text-slate-200">Barrel:</strong> Leroy 438mm | 
+            <strong class="text-slate-200">Stock:</strong> Removal Stock | 
+            <strong class="text-slate-200">Ammo:</strong> 60 Round Mag
           </p>
         </div>
-        <button onclick="copyCode('MCW-9982-WARZONE')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
-          Copy Build Code
+        <button onclick="copyCode('BP50-1B2C3D')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Share Code
         </button>
       </div>
 
       <!-- Weapon Card 2 -->
       <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h3 class="text-lg font-bold text-white">Rival-9 — Ranked SMG</h3>
+          <h3 class="text-lg font-bold text-white">DR-H — Ranked MP Build</h3>
           <p class="text-sm text-slate-400 mt-1">
-            <strong class="text-slate-200">Muzzle:</strong> Purifier Muzzle Brake | 
-            <strong class="text-slate-200">Barrel:</strong> Rival-C Clear Shot | 
-            <strong class="text-slate-200">Underbarrel:</strong> DR-6 Handstop | 
-            <strong class="text-slate-200">Rear Grip:</strong> Vice Assault Grip
+            <strong class="text-slate-200">Muzzle:</strong> Monolithic Suppressor | 
+            <strong class="text-slate-200">Barrel:</strong> OWC Marksman | 
+            <strong class="text-slate-200">Stock:</strong> No Stock | 
+            <strong class="text-slate-200">Ammo:</strong> 25 Round OTM Mag
           </p>
         </div>
-        <button onclick="copyCode('RIVAL9-RANKED-01')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
-          Copy Build Code
+        <button onclick="copyCode('DRH-4E5F6G')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition">
+          Copy Share Code
         </button>
       </div>
     </div>
@@ -129,23 +131,36 @@
   <!-- Clan Join Application Form -->
   <section id="apply" class="max-w-xl mx-auto w-full px-6 py-10 mb-12">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-      <h2 class="text-2xl font-bold text-white mb-6">Join Our Call of Duty Clan</h2>
+      <h2 class="text-2xl font-bold text-white mb-6">Join Our CODM Clan</h2>
       
       <form id="joinForm" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-300 mb-1">Your Name / Gamer Tag:</label>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">In-Game Name (IGN):</label>
           <input type="text" id="playerName" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-slate-300 mb-1">Activision ID (e.g. Player#12345):</label>
-          <input type="text" id="activisionId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+          <label class="block text-sm font-semibold text-slate-300 mb-1">CODM Character UID (18 digits):</label>
+          <input type="text" id="characterUid" required placeholder="e.g. 674918239012384712" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-300 mb-1">Discord Username:</label>
           <input type="text" id="discordTag" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
         </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Playing Device:</label>
+          <select id="deviceType" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+            <option value="Android Phone">Android Phone</option>
+            <option value="iOS (iPhone)">iOS (iPhone)</option>
+            <option value="iPad / Tablet">iPad / Tablet</option>
+            <option value="PC Emulator (Gameloop)">PC Emulator (Gameloop)</option>
+          </select>
+        </div>
+
+        <!-- Turnstile Widget (Replace with your actual sitekey) -->
+        <div class="cf-turnstile my-4" data-sitekey="YOUR_TURNSTILE_SITE_KEY_HERE"></div>
 
         <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg transition">
           Submit Application
@@ -158,19 +173,18 @@
 
   <!-- JavaScript -->
   <script>
-    // Copy build code function
     function copyCode(code) {
       navigator.clipboard.writeText(code);
-      alert("Loadout code copied: " + code);
+      alert("Gunsmith code copied: " + code);
     }
 
-    // Form submission function
     document.getElementById('joinForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const name = document.getElementById('playerName').value;
-      const activision = document.getElementById('activisionId').value;
+      const uid = document.getElementById('characterUid').value;
       const discord = document.getElementById('discordTag').value;
+      const device = document.getElementById('deviceType').value;
       const msg = document.getElementById('responseMessage');
 
       msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
@@ -180,12 +194,13 @@
 
       const payload = {
         embeds: [{
-          title: "🪖 New COD Clan Application!",
+          title: "📱 New CODM Clan Application!",
           color: 16733696,
           fields: [
-            { name: "Gamer Tag", value: name, inline: true },
-            { name: "Activision ID", value: activision, inline: true },
-            { name: "Discord Tag", value: discord, inline: true }
+            { name: "IGN", value: name, inline: true },
+            { name: "Character UID", value: uid, inline: true },
+            { name: "Discord", value: discord, inline: true },
+            { name: "Device", value: device, inline: true }
           ],
           timestamp: new Date().toISOString()
         }]
