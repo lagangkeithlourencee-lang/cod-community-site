@@ -8,11 +8,12 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- Navigation -->
+<!-- Navigation -->
   <nav class="border-b border-slate-800 bg-slate-900/80 px-6 py-4 flex justify-between items-center">
     <div class="text-xl font-black text-amber-500 tracking-wider">TF141 CLAN</div>
     <div class="space-x-6 text-sm font-semibold">
       <a href="#" class="hover:text-amber-400">Home</a>
+      <a href="#roster" class="hover:text-amber-400">Roster</a>
       <a href="#loadouts" class="hover:text-amber-400">Loadouts</a>
       <a href="#apply" class="hover:text-amber-400">Apply</a>
     </div>
@@ -37,6 +38,54 @@
   </main>
 
   <!-- Meta Loadout Builder Section -->
+  <!-- Clan Roster Section -->
+  <section id="roster" class="max-w-3xl mx-auto w-full px-6 py-10">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center justify-between">
+        <span>🛡️ Active Clan Roster</span>
+        <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-semibold">4 Members</span>
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-xs uppercase text-slate-400">
+              <th class="py-3 px-2">Player</th>
+              <th class="py-3 px-2">Activision ID</th>
+              <th class="py-3 px-2">Role</th>
+              <th class="py-3 px-2">Platform</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50 text-sm">
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Ghost</td>
+              <td class="py-3 px-2 text-slate-400">Ghost#11411</td>
+              <td class="py-3 px-2"><span class="bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">Leader</span></td>
+              <td class="py-3 px-2 text-slate-300">PC</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Soap</td>
+              <td class="py-3 px-2 text-slate-400">Soap#22890</td>
+              <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
+              <td class="py-3 px-2 text-slate-300">PS5</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Price</td>
+              <td class="py-3 px-2 text-slate-400">Price#00001</td>
+              <td class="py-3 px-2"><span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold">Officer</span></td>
+              <td class="py-3 px-2 text-slate-300">PC</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-2 font-bold text-white">Gaz</td>
+              <td class="py-3 px-2 text-slate-400">Gaz#99102</td>
+              <td class="py-3 px-2"><span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded font-bold">Member</span></td>
+              <td class="py-3 px-2 text-slate-300">Xbox</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
   <section id="loadouts" class="max-w-3xl mx-auto w-full px-6 py-10">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
       <h2 class="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
