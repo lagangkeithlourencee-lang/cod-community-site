@@ -35,6 +35,32 @@
       </a>
     </div>
   </main>
+<!-- Clan Join Application Form -->
+<section style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: sans-serif; background: #111; color: #fff; border-radius: 8px;">
+  <h2>Join Our Call of Duty Clan</h2>
+  
+  <form id="joinForm">
+    <div style="margin-bottom: 15px;">
+      <label>Your Name / Gamer Tag:</label><br>
+      <input type="text" id="playerName" required style="width: 100%; padding: 8px; margin-top: 5px;">
+    </div>
 
+    <div style="margin-bottom: 15px;">
+      <label>Activision ID (e.g. Player#12345):</label><br>
+      <input type="text" id="activisionId" required style="width: 100%; padding: 8px; margin-top: 5px;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label>Discord Username:</label><br>
+      <input type="text" id="discordTag" required style="width: 100%; padding: 8px; margin-top: 5px;">
+    </div>
+
+    <button type="submit" style="background: #ff5500; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px;">
+      Submit Application
+    </button>
+  </form>
+
+  <p id="responseMessage" style="margin-top: 15px; font-weight: bold;"></p>
+</section>
 </body>
 </html>
