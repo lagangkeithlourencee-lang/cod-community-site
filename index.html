@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TF141 — CODM Community Hub</title>
+  
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TF141 — Call of Duty: Mobile Clan">
+  <meta property="og:description" content="Join Task Force 141. Check our active roster, copy meta Gunsmith loadouts, and submit your clan application.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80">
+  <meta property="twitter:card" content="summary_large_image">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
@@ -221,11 +232,15 @@
     </div>
   </footer>
 
-  <!-- JavaScript -->
+<!-- JavaScript -->
   <script>
     function copyCode(code) {
       navigator.clipboard.writeText(code);
-      alert("Gunsmith code copied: " + code);
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-5 right-5 bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.innerText = `Copied Loadout: ${code}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
     }
 
     document.getElementById('joinForm').addEventListener('submit', async function(e) {
@@ -247,24 +262,19 @@
       msg.className = "mt-4 font-bold text-sm text-center text-amber-400";
       msg.innerText = "Sending application...";
 
-      const webhookUrl = "https://discord.com/api/webhooks/1541399369360613456/oLuyv9hYzvwl4mrvPp0AueiYZt_cXMqXRGahmFAw5GP0-5KNGOYj9ikLaw0E333vVMjB";
+      // Replace this URL with your actual Cloudflare Worker URL
+      const workerUrl = "https://codm-form-handler.YOUR-SUBDOMAIN.workers.dev";
 
       const payload = {
-        embeds: [{
-          title: "📱 New CODM Clan Application!",
-          color: 16733696,
-          fields: [
-            { name: "IGN", value: name, inline: true },
-            { name: "Character UID", value: uid, inline: true },
-            { name: "Discord", value: discord, inline: true },
-            { name: "Device", value: device, inline: true }
-          ],
-          timestamp: new Date().toISOString()
-        }]
+        name: name,
+        uid: uid,
+        discord: discord,
+        device: device,
+        token: turnstileResponse
       };
 
       try {
-        const res = await fetch(webhookUrl, {
+        const res = await fetch(workerUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
