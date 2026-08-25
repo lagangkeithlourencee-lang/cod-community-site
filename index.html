@@ -78,8 +78,6 @@
                   radial-gradient(ellipse 90% 75% at 50% 50%, transparent 30%, rgba(4,6,11,0.55) 75%, rgba(4,6,11,0.92) 100%),
                   radial-gradient(ellipse 80% 60% at 50% 110%, rgba(0,0,0,0.85), transparent 60%);
     }
-    /* Looping smoke/fog video: gives the true "gif wallpaper" feel — actual continuous
-       motion instead of a static pan. Rights-free footage (Pixabay Content License). */
     .wp-video{
       position:absolute; inset:0;
       width:100%; height:100%;
@@ -88,7 +86,6 @@
       opacity: 0.8;
       mix-blend-mode: screen;
     }
-    /* Radar sweep, tucked in the corner like a HUD minimap */
     .wp-radar{
       position:absolute;
       top: 90px; right: -140px;
@@ -119,7 +116,7 @@
       .wp-video{ display:none; }
     }
 
-    /* ---------- HUD panel corner brackets (signature element) ---------- */
+    /* ---------- HUD panel corner brackets ---------- */
     .hud-panel{ position: relative; }
     .hud-panel::before, .hud-panel::after,
     .hud-panel .hud-br::before, .hud-panel .hud-br::after{
@@ -141,37 +138,21 @@
     .clip-btn{ clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 
     .text-glow{ text-shadow: 0 0 18px rgba(245,166,35,0.35); }
-    .divider-tick{
-      background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 14px);
-      height: 2px; opacity: .5;
-    }
 
-    /* ---------- Modal ----------
-       Closed by default via the [hidden] attribute (removed from render tree entirely,
-       not just faded out) — it can only appear after openModal() runs on a click. */
+    /* ---------- Modal ---------- */
     #applyModal{ transition: opacity .25s ease; opacity: 0; }
     #applyModal.is-open{ opacity: 1; }
     #applyModalCard{ transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s ease; transform: translateY(24px) scale(.97); opacity:0; }
     #applyModal.is-open #applyModalCard{ transform: translateY(0) scale(1); opacity:1; }
 
-    /* ---------- Hero operator emblem (original artwork, not the licensed character) ---------- */
+    /* ---------- Hero operator emblem ---------- */
     .operator-emblem{ filter: drop-shadow(0 0 30px rgba(245,166,35,0.25)); }
-    .operator-emblem .ring-slow{ animation: ringSpin 40s linear infinite; transform-origin: 200px 200px; }
-    .operator-emblem .ring-slow-rev{ animation: ringSpinRev 55s linear infinite; transform-origin: 200px 200px; }
-    @keyframes ringSpin{ to{ transform: rotate(360deg); } }
-    @keyframes ringSpinRev{ to{ transform: rotate(-360deg); } }
-    @media (prefers-reduced-motion: reduce){
-      .operator-emblem .ring-slow, .operator-emblem .ring-slow-rev{ animation: none; }
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
   <!-- Animated wallpaper -->
   <div class="wallpaper">
-    <video class="wp-video" autoplay muted loop playsinline poster="https://giphy.com/gifs/playstationde-call-of-duty-cod-modern-warfare-3-uES0oXcxs0TVGE79Mu.jpg">
-      <source src="https://giphy.com/gifs/playstationde-call-of-duty-cod-modern-warfare-3-uES0oXcxs0TVGE79Mu" type="video/mp4">
-    </video>
     <div class="wp-grid"></div>
     <div class="wp-radar"></div>
     <div class="wp-scan"></div>
@@ -206,8 +187,7 @@
     <!-- Hero Section -->
     <header class="max-w-7xl mx-auto px-6 pt-16 pb-10 text-center relative w-full">
 
-      <!-- Original squad artwork — an operator silhouette overlooking the city at night,
-           built from scratch (not the licensed game character or any game footage) -->
+      <!-- Squad emblem graphic -->
       <div class="mx-auto mb-6 w-64 lg:w-[420px] lg:absolute lg:right-0 lg:-top-4 lg:mb-0 opacity-95 pointer-events-none operator-emblem">
         <svg viewBox="0 0 480 560" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -220,7 +200,6 @@
             </radialGradient>
           </defs>
 
-          <!-- distant city lights, hazy and blurred like a night skyline below -->
           <g filter="url(#glowBlur)">
             <ellipse cx="70" cy="470" rx="46" ry="22" fill="#ffcf6b" fill-opacity="0.55"/>
             <ellipse cx="420" cy="500" rx="38" ry="18" fill="#ffcf6b" fill-opacity="0.45"/>
@@ -232,7 +211,6 @@
 
           <circle cx="270" cy="260" r="180" fill="url(#figureGlow)"/>
 
-          <!-- gantry / railing -->
           <g stroke="#f5a623" stroke-opacity="0.35" stroke-width="2" fill="none">
             <line x1="30" y1="382" x2="450" y2="382"/>
             <line x1="30" y1="428" x2="450" y2="428"/>
@@ -252,31 +230,19 @@
             <line x1="255" y1="452" x2="440" y2="452"/>
           </g>
 
-          <!-- operator, viewed from behind, standing at the rail looking down -->
           <g fill="#060911" stroke="#f5a623" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round">
-            <!-- backpack -->
             <ellipse cx="248" cy="232" rx="19" ry="32"/>
-            <!-- torso -->
             <polygon points="265,206 336,206 326,302 276,302"/>
-            <!-- shoulders -->
             <polygon points="270,178 331,178 341,206 261,206"/>
-            <!-- belt -->
             <rect x="271" y="298" width="60" height="13"/>
-            <!-- legs (braced stance) -->
             <polygon points="273,300 296,300 292,430 266,430"/>
             <polygon points="306,300 329,300 336,430 312,430"/>
-            <!-- resting arm on the rail -->
             <path d="M334,200 C356,220 362,300 361,382 L347,382 C346,300 340,225 322,204 Z"/>
-            <!-- other arm at side -->
             <path d="M267,200 C250,225 246,265 250,296 L266,294 C264,262 268,228 280,204 Z"/>
-            <!-- neck -->
             <rect x="290" y="168" width="20" height="12"/>
-            <!-- head / helmet -->
             <ellipse cx="300" cy="144" rx="22" ry="26"/>
-            <!-- side comm unit -->
             <rect x="316" y="136" width="10" height="15" rx="2"/>
           </g>
-          <!-- antenna -->
           <line x1="317" y1="122" x2="332" y2="94" stroke="#f5a623" stroke-opacity="0.6" stroke-width="1.5"/>
           <circle cx="332" cy="94" r="2" fill="#f5a623" fill-opacity="0.8"/>
         </svg>
@@ -323,7 +289,7 @@
       </div>
     </header>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <div class="max-w-5xl mx-auto px-6 py-8 space-y-10 w-full flex-1">
 
       <!-- Announcements Banner -->
@@ -506,9 +472,9 @@
     </footer>
   </div>
 
-  <!-- ============ Application Modal ============ -->
+  <!-- Application Modal -->
   <div id="applyModal" hidden class="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 py-10 overflow-y-auto" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="applyModalTitle">
-    <div id="applyModalBackdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+    <div id="applyModalBackdrop" onclick="closeModal()" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
 
     <div id="applyModalCard" class="hud-panel relative w-full max-w-md bg-slate-900/95 border border-amber-500/30 rounded-2xl p-6 shadow-2xl shadow-black/60"><span class="hud-br"></span>
 
@@ -573,34 +539,30 @@
       modal.hidden = false;
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      // let the browser register the un-hide before animating in
       requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('is-open')));
       const firstField = document.getElementById('playerName');
       if(firstField) setTimeout(() => firstField.focus(), 200);
     }
+
     function closeModal(){
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      setTimeout(() => { modal.hidden = true; }, 260);
+      setTimeout(() => { modal.hidden = true; }, 250);
       if(lastFocused) lastFocused.focus();
     }
-    document.getElementById('applyModalBackdrop').addEventListener('click', closeModal);
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && modal.dataset.open === "true") closeModal();
-    });
 
-    /* ---------- Gunsmith code copy ---------- */
+    /* ---------- Copy code functionality ---------- */
     function copyCode(code) {
       navigator.clipboard.writeText(code);
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-5 right-5 bg-amber-500 text-slate-950 font-black text-xs px-4 py-3 rounded-lg shadow-2xl z-[200] transition-all duration-300 uppercase tracking-wider';
+      toast.className = 'fixed bottom-5 right-5 bg-amber-500 text-slate-950 font-black text-xs px-4 py-3 rounded-lg shadow-2xl z-50 transition-all duration-300 uppercase tracking-wider';
       toast.innerText = `Copied Gunsmith Code: ${code}`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 2500);
     }
 
-    /* ---------- Application submit ---------- */
+    /* ---------- Form submission handler ---------- */
     document.getElementById('joinForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -610,7 +572,7 @@
       const device = document.getElementById('deviceType').value;
       const msg = document.getElementById('responseMessage');
 
-      const turnstileResponse = (typeof turnstile !== 'undefined') ? turnstile.getResponse() : null;
+      const turnstileResponse = turnstile.getResponse();
       if (!turnstileResponse) {
         msg.className = "mt-4 font-bold text-xs text-center text-rose-500";
         msg.innerText = "Please complete the security check before submitting.";
@@ -620,10 +582,16 @@
       msg.className = "mt-4 font-bold text-xs text-center text-amber-400";
       msg.innerText = "Transmitting application data...";
 
-      // Replace this URL with your actual Cloudflare Worker URL
-      const workerUrl = "https://codm-form-handler.lagang-keithlourencee.workers.dev";
+      // Replace with your Cloudflare Worker URL
+      const workerUrl = "https://codm-form-handler.YOUR-SUBDOMAIN.workers.dev";
 
-      const payload = { name, uid, discord, device, token: turnstileResponse };
+      const payload = {
+        name: name,
+        uid: uid,
+        discord: discord,
+        device: device,
+        token: turnstileResponse
+      };
 
       try {
         const res = await fetch(workerUrl, {
@@ -636,8 +604,8 @@
           msg.className = "mt-4 font-bold text-xs text-center text-emerald-400";
           msg.innerText = "Application received! Check Discord for updates.";
           document.getElementById('joinForm').reset();
-          if (typeof turnstile !== 'undefined') turnstile.reset();
-          setTimeout(closeModal, 1600);
+          turnstile.reset();
+          setTimeout(() => closeModal(), 3000);
         } else {
           throw new Error();
         }
@@ -647,52 +615,59 @@
       }
     });
 
-    /* ---------- Ember particle wallpaper ---------- */
-    (function(){
-      const canvas = document.getElementById('emberCanvas');
-      if (!canvas) return;
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
+    /* ---------- Ember particle canvas animation ---------- */
+    const canvas = document.getElementById('emberCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-      const ctx = canvas.getContext('2d');
-      let w, h, particles;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-      function resize(){
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
+    class Particle {
+      constructor() {
+        this.reset();
       }
-      function makeParticle(){
-        return {
-          x: Math.random() * w,
-          y: h + Math.random() * 100,
-          r: Math.random() * 1.6 + 0.4,
-          speed: Math.random() * 0.6 + 0.15,
-          drift: (Math.random() - 0.5) * 0.4,
-          alpha: Math.random() * 0.5 + 0.15
-        };
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 20;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedY = Math.random() * 1.5 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.8 + 0.2;
       }
-      function init(){
-        resize();
-        const count = Math.min(60, Math.floor((w * h) / 26000));
-        particles = Array.from({ length: count }, makeParticle);
-      }
-      function tick(){
-        ctx.clearRect(0, 0, w, h);
-        for (const p of particles){
-          p.y -= p.speed;
-          p.x += p.drift;
-          if (p.y < -10) Object.assign(p, makeParticle(), { y: h + 10 });
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(245, 166, 35, ${p.alpha})`;
-          ctx.fill();
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        this.opacity -= 0.003;
+        if (this.y < 0 || this.opacity <= 0) {
+          this.reset();
         }
-        requestAnimationFrame(tick);
       }
-      window.addEventListener('resize', resize);
-      init();
-      requestAnimationFrame(tick);
-    })();
+      draw() {
+        ctx.fillStyle = `rgba(245, 166, 35, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 45; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
   </script>
 
 </body>
