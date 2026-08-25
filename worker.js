@@ -3,6 +3,7 @@
  * Bindings required (set in wrangler.toml or the dashboard):
  *   DB              -> D1 database bound with schema.sql applied
  *   TURNSTILE_SECRET -> your Turnstile secret key (Worker secret, not a var)
+ *   ADMIN_KEY       -> a password you make up, set as a Worker secret
  *
  * Routes:
  *   GET  /api/leaderboard
@@ -11,9 +12,13 @@
  *   GET  /api/loadouts
  *   POST /api/loadouts/:id/vote      { }               (voter identified by IP hash)
  *   POST /api/apply                  { name, discord, device, uid, token }
+ *
+ *   -- Admin (require header X-Admin-Key: <ADMIN_KEY>) --
+ *   GET  /api/admin/applications              list all applications
+ *   POST /api/admin/applications/:id/status   { status: "accepted" | "rejected" }
  */
 
-   const ALLOWED_ORIGIN = "https://lagangkeithlourencee-lang.github.io";
+const ALLOWED_ORIGIN = "https://lagangkeithlourencee-lang.github.io/cod-community-site/"; // <-- set this to your real domain
 
 function cors(resp) {
   resp.headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
@@ -146,6 +151,36 @@ export default {
         ).bind(name, discord, device || "Unknown", uid).run();
 
         return json({ ok: true });
+      }
+
+      // ---- Admin routes: require X-Admin-Key header ----
+      if (url.pathname.startsWith("/api/admin/")) {
+        const key = request.headers.get("X-Admin-Key");
+        if (!key || key !== env.ADMIN_KEY) {
+          return json({ error: "Unauthorized" }, 401);
+        }
+
+        // ---- GET /api/admin/applications ----
+        if (url.pathname === "/api/admin/applications" && request.method === "GET") {
+          const { results } = await env.DB.prepare(
+            `SELECT id, ign, discord, device, uid, status, created_at
+             FROM applications ORDER BY created_at DESC LIMIT 200`
+          ).all();
+          return json({ applications: results });
+        }
+
+        // ---- POST /api/admin/applications/:id/status ----
+        const statusMatch = url.pathname.match(/^\/api\/admin\/applications\/(\d+)\/status$/);
+        if (statusMatch && request.method === "POST") {
+          const appId = Number(statusMatch[1]);
+          const { status } = await request.json();
+          if (!["accepted", "rejected", "pending"].includes(status)) {
+            return json({ error: "Invalid status" }, 400);
+          }
+          await env.DB.prepare(`UPDATE applications SET status = ? WHERE id = ?`)
+            .bind(status, appId).run();
+          return json({ ok: true });
+        }
       }
 
       return json({ error: "Not found" }, 404);
