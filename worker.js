@@ -13,7 +13,7 @@
  *   POST /api/apply                  { name, discord, device, uid, token }
  */
 
-const ALLOWED_ORIGIN = "https://your-domain-here.com"; // <-- set this to your real domain
+   const ALLOWED_ORIGIN = "https://lagangkeithlourencee-lang.github.io";
 
 function cors(resp) {
   resp.headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
