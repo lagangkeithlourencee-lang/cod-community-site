@@ -75,22 +75,18 @@
     .wp-vignette{
       position:absolute; inset:0;
       background: radial-gradient(ellipse 60% 50% at 50% -5%, rgba(245,166,35,0.10), transparent 60%),
-                  radial-gradient(ellipse 80% 60% at 50% 110%, rgba(0,0,0,0.7), transparent 60%);
+                  radial-gradient(ellipse 90% 75% at 50% 50%, transparent 30%, rgba(4,6,11,0.55) 75%, rgba(4,6,11,0.92) 100%),
+                  radial-gradient(ellipse 80% 60% at 50% 110%, rgba(0,0,0,0.85), transparent 60%);
     }
-    /* Slow-panning ops photo behind everything: gives the page real "moving wallpaper" motion */
-    .wp-photo{
-      position:absolute; inset:-5%;
-      width:110%; height:110%;
-      background-image: linear-gradient(180deg, rgba(4,6,11,0.55), rgba(4,6,11,0.88) 70%, rgba(4,6,11,0.98)),
-                         url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=70');
-      background-size: cover;
-      background-position: center;
-      filter: grayscale(55%) contrast(1.1) brightness(0.55);
-      animation: photoDrift 28s ease-in-out infinite alternate;
-    }
-    @keyframes photoDrift{
-      0%{ transform: scale(1.06) translate(0, 0); }
-      100%{ transform: scale(1.16) translate(-1.5%, -1%); }
+    /* Looping smoke/fog video: gives the true "gif wallpaper" feel — actual continuous
+       motion instead of a static pan. Rights-free footage (Pixabay Content License). */
+    .wp-video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      filter: grayscale(35%) brightness(0.4) contrast(1.15) sepia(15%) hue-rotate(-10deg);
+      opacity: 0.8;
+      mix-blend-mode: screen;
     }
     /* Radar sweep, tucked in the corner like a HUD minimap */
     .wp-radar{
@@ -118,8 +114,9 @@
     #emberCanvas{ position:absolute; inset:0; width:100%; height:100%; opacity:0.55; }
 
     @media (prefers-reduced-motion: reduce){
-      .wp-grid, .wp-radar, .wp-scan, .wp-photo{ animation: none !important; }
+      .wp-grid, .wp-radar, .wp-scan{ animation: none !important; }
       #emberCanvas{ display:none; }
+      .wp-video{ display:none; }
     }
 
     /* ---------- HUD panel corner brackets (signature element) ---------- */
@@ -157,14 +154,24 @@
     #applyModalCard{ transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s ease; transform: translateY(24px) scale(.97); opacity:0; }
     #applyModal.is-open #applyModalCard{ transform: translateY(0) scale(1); opacity:1; }
 
-    input[type="text"]:focus, select:focus{ box-shadow: 0 0 0 3px rgba(245,166,35,0.15); }
+    /* ---------- Hero operator emblem (original artwork, not the licensed character) ---------- */
+    .operator-emblem{ filter: drop-shadow(0 0 30px rgba(245,166,35,0.25)); }
+    .operator-emblem .ring-slow{ animation: ringSpin 40s linear infinite; transform-origin: 200px 200px; }
+    .operator-emblem .ring-slow-rev{ animation: ringSpinRev 55s linear infinite; transform-origin: 200px 200px; }
+    @keyframes ringSpin{ to{ transform: rotate(360deg); } }
+    @keyframes ringSpinRev{ to{ transform: rotate(-360deg); } }
+    @media (prefers-reduced-motion: reduce){
+      .operator-emblem .ring-slow, .operator-emblem .ring-slow-rev{ animation: none; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
   <!-- Animated wallpaper -->
   <div class="wallpaper">
-    <div class="wp-photo"></div>
+    <video class="wp-video" autoplay muted loop playsinline poster="https://giphy.com/gifs/playstationde-call-of-duty-cod-modern-warfare-3-uES0oXcxs0TVGE79Mu.jpg">
+      <source src="https://giphy.com/gifs/playstationde-call-of-duty-cod-modern-warfare-3-uES0oXcxs0TVGE79Mu" type="video/mp4">
+    </video>
     <div class="wp-grid"></div>
     <div class="wp-radar"></div>
     <div class="wp-scan"></div>
@@ -198,18 +205,95 @@
 
     <!-- Hero Section -->
     <header class="max-w-7xl mx-auto px-6 pt-16 pb-10 text-center relative w-full">
-      <span class="inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 text-[11px] font-bold px-3 py-1 clip-tag border border-amber-500/20 uppercase tracking-[0.2em] mb-6">
+
+      <!-- Original squad artwork — an operator silhouette overlooking the city at night,
+           built from scratch (not the licensed game character or any game footage) -->
+      <div class="mx-auto mb-6 w-64 lg:w-[420px] lg:absolute lg:right-0 lg:-top-4 lg:mb-0 opacity-95 pointer-events-none operator-emblem">
+        <svg viewBox="0 0 480 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glowBlur" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="10"/>
+            </filter>
+            <radialGradient id="figureGlow" cx="50%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#f5a623" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#f5a623" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <!-- distant city lights, hazy and blurred like a night skyline below -->
+          <g filter="url(#glowBlur)">
+            <ellipse cx="70" cy="470" rx="46" ry="22" fill="#ffcf6b" fill-opacity="0.55"/>
+            <ellipse cx="420" cy="500" rx="38" ry="18" fill="#ffcf6b" fill-opacity="0.45"/>
+            <circle cx="150" cy="510" r="6" fill="#f5a623" fill-opacity="0.6"/>
+            <circle cx="190" cy="495" r="4" fill="#f5a623" fill-opacity="0.5"/>
+            <circle cx="360" cy="480" r="5" fill="#f5a623" fill-opacity="0.5"/>
+            <circle cx="230" cy="520" r="3" fill="#ffcf6b" fill-opacity="0.6"/>
+          </g>
+
+          <circle cx="270" cy="260" r="180" fill="url(#figureGlow)"/>
+
+          <!-- gantry / railing -->
+          <g stroke="#f5a623" stroke-opacity="0.35" stroke-width="2" fill="none">
+            <line x1="30" y1="382" x2="450" y2="382"/>
+            <line x1="30" y1="428" x2="450" y2="428"/>
+            <line x1="70" y1="382" x2="70" y2="428"/>
+            <line x1="140" y1="382" x2="140" y2="428"/>
+            <line x1="210" y1="382" x2="210" y2="428"/>
+            <line x1="400" y1="382" x2="400" y2="428"/>
+            <line x1="70" y1="428" x2="140" y2="382"/>
+            <line x1="140" y1="428" x2="210" y2="382"/>
+          </g>
+          <g stroke="#f5a623" stroke-opacity="0.2" stroke-width="1">
+            <line x1="260" y1="430" x2="260" y2="460"/>
+            <line x1="300" y1="430" x2="300" y2="460"/>
+            <line x1="340" y1="430" x2="340" y2="460"/>
+            <line x1="380" y1="430" x2="380" y2="460"/>
+            <line x1="255" y1="440" x2="440" y2="440"/>
+            <line x1="255" y1="452" x2="440" y2="452"/>
+          </g>
+
+          <!-- operator, viewed from behind, standing at the rail looking down -->
+          <g fill="#060911" stroke="#f5a623" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round">
+            <!-- backpack -->
+            <ellipse cx="248" cy="232" rx="19" ry="32"/>
+            <!-- torso -->
+            <polygon points="265,206 336,206 326,302 276,302"/>
+            <!-- shoulders -->
+            <polygon points="270,178 331,178 341,206 261,206"/>
+            <!-- belt -->
+            <rect x="271" y="298" width="60" height="13"/>
+            <!-- legs (braced stance) -->
+            <polygon points="273,300 296,300 292,430 266,430"/>
+            <polygon points="306,300 329,300 336,430 312,430"/>
+            <!-- resting arm on the rail -->
+            <path d="M334,200 C356,220 362,300 361,382 L347,382 C346,300 340,225 322,204 Z"/>
+            <!-- other arm at side -->
+            <path d="M267,200 C250,225 246,265 250,296 L266,294 C264,262 268,228 280,204 Z"/>
+            <!-- neck -->
+            <rect x="290" y="168" width="20" height="12"/>
+            <!-- head / helmet -->
+            <ellipse cx="300" cy="144" rx="22" ry="26"/>
+            <!-- side comm unit -->
+            <rect x="316" y="136" width="10" height="15" rx="2"/>
+          </g>
+          <!-- antenna -->
+          <line x1="317" y1="122" x2="332" y2="94" stroke="#f5a623" stroke-opacity="0.6" stroke-width="1.5"/>
+          <circle cx="332" cy="94" r="2" fill="#f5a623" fill-opacity="0.8"/>
+        </svg>
+      </div>
+
+      <span class="inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 text-[11px] font-bold px-3 py-1 clip-tag border border-amber-500/20 uppercase tracking-[0.2em] mb-6 relative">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         Recruiting Competitive Players
       </span>
-      <h1 class="text-5xl md:text-7xl font-bold uppercase text-white tracking-tight max-w-3xl mx-auto leading-[0.95] text-glow">
+      <h1 class="text-5xl md:text-7xl font-bold uppercase text-white tracking-tight max-w-3xl mx-auto leading-[0.95] text-glow relative">
         Precision. Power. <span class="text-amber-500">Dominance.</span>
       </h1>
-      <p class="mt-5 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+      <p class="mt-5 text-slate-400 text-sm md:text-base max-w-xl mx-auto relative">
         The operational home of Task Force 141 in Call of Duty: Mobile. Roster, meta Gunsmith builds, deployment schedule — and a seat waiting in the lobby.
       </p>
 
-      <div class="flex items-center justify-center gap-3 mt-8">
+      <div class="flex items-center justify-center gap-3 mt-8 relative">
         <button onclick="openModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-3 clip-btn text-xs font-black uppercase tracking-[0.15em] transition shadow-lg shadow-amber-500/20">
           Apply to Join
         </button>
@@ -219,7 +303,7 @@
       </div>
 
       <!-- Stats Bar -->
-      <div id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-12">
+      <div id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-12 relative">
         <div class="hud-panel bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-md"><span class="hud-br"></span>
           <div class="text-2xl font-bold text-amber-500 mono">#12</div>
           <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-1">Regional Rank</div>
