@@ -3,46 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Force 141 Hub</title>
-  
+  <title>Task Force 141 - CODM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Reset margins and set background fallback */
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #0b0c10;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* 1. FIXED CONTAINER: Locks the background in place */
-    .bg-container {
+    /* Fixed background video layer */
+    .bg-video-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -2; /* Sits behind everything else */
-      pointer-events: none; /* Prevents users from clicking or interacting with the GIF */
+      z-index: -2;
+      pointer-events: none;
       overflow: hidden;
     }
 
-    /* 2. RESPONSIVE IFRAME: Scales the GIPHY embed to act like a background cover */
-    .bg-container iframe {
+    .bg-video-container iframe {
       position: absolute;
       top: 50%;
       left: 50%;
       width: 100vw;
-      height: 100vh;
+      height: 56.25vw; /* Maintains 16:9 aspect ratio */
       min-height: 100vh;
-      min-width: 100vw;
-      object-fit: cover;
-      transform: translate(-50%, -50%) scale(1.2); /* Slight scale to hide embed edges */
+      min-width: 177.77vh;
+      transform: translate(-50%, -50%) scale(1.1); /* Scales slightly to remove iframe borders */
     }
 
-    /* 3. DARK OVERLAY: Darkens the GIF so text remains clear and readable */
+    /* Dark overlay for high contrast text readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -50,86 +37,84 @@
       width: 100vw;
       height: 100vh;
       z-index: -1;
-      background: rgba(0, 0, 0, 0.65);
+      background: radial-gradient(circle at center, rgba(11, 12, 16, 0.75) 0%, rgba(11, 12, 16, 0.95) 100%);
     }
 
-    /* 4. WEBSITE CONTENT LAYOUT */
-    .site-wrapper {
-      position: relative;
-      z-index: 1;
-      color: #ffffff;
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 0 0 10px 0;
-      color: #e50914; /* CoD red accent */
-    }
-
-    .main-box {
-      background: rgba(20, 22, 26, 0.85);
-      border: 1px solid #2f343d;
-      border-radius: 8px;
-      padding: 30px;
-      margin-bottom: 40px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
-    /* 5. LEGAL FOOTER REQUIREMENT */
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #7a7a7a;
-      line-height: 1.5;
-      margin-top: 60px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 20px;
+    /* Subtle grid overlay to keep tactical aesthetic */
+    .tactical-grid {
+      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
   </style>
 </head>
-<body>
+<body class="bg-[#0b0c10] text-white font-sans min-h-screen flex flex-col justify-between tactical-grid overflow-x-hidden">
 
-  <!-- Background GIF -->
-  <div class="bg-container">
+  <!-- Background GIF Layer -->
+  <div class="bg-video-container">
     <iframe src="https://giphy.com/embed/uES0oXcxs0TVGE79Mu" 
-            frameBorder="0" 
-            class="giphy-embed" 
-            allowFullScreen>
+            frameborder="0" 
+            allowfullscreen>
     </iframe>
   </div>
 
-  <!-- Dark overlay layer for readability -->
+  <!-- Dark Layer -->
   <div class="bg-overlay"></div>
 
-  <!-- Main Website Content -->
-  <div class="site-wrapper">
+  <!-- Main Interface Content -->
+  <div class="relative z-10 max-w-6xl mx-auto px-6 py-12 flex-grow flex flex-col justify-center">
     
-    <header>
-      <h1>Task Force 141 Hub</h1>
-      <p>Unofficial Call of Duty Community Forum</p>
-    </header>
+    <!-- Status Badge -->
+    <div class="mb-6">
+      <span class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/40 rounded-full text-amber-400 text-xs tracking-widest font-semibold uppercase">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        Recruiting Competitive Players
+      </span>
+    </div>
 
-    <main class="main-box">
-      <h2>Latest News & Matches</h2>
-      <p>Welcome to the community center. Put your forum boards, user profiles, or match schedules inside this section.</p>
-    </main>
+    <!-- Main Headline -->
+    <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-none mb-6">
+      PRECISION. POWER.<br>
+      <span class="text-amber-500">DOMINANCE.</span>
+    </h1>
 
-    <!-- Required Legal Footer Disclaimer -->
-    <footer>
-      <p>This website is an unofficial, non-commercial fan community and is not endorsed by, directly affiliated with, maintained, authorized, or sponsored by Activision Publishing, Inc.</p>
-      <p>Call of Duty, Modern Warfare, Warzone, and all associated logos, characters, and imagery are registered trademarks of Activision. Media served via official GIPHY API embed protocols.</p>
-    </footer>
+    <!-- Subtitle -->
+    <p class="text-gray-300 text-lg md:text-xl max-w-2xl font-light mb-10 leading-relaxed">
+      The operational home of Task Force 141 in Call of Duty: Mobile. Roster, meta Gunsmith builds, deployment schedule — and a seat waiting in the lobby.
+    </p>
+
+    <!-- Call to Action Buttons -->
+    <div class="flex flex-wrap gap-4 mb-16">
+      <a href="#apply" class="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-wider rounded transition shadow-lg shadow-amber-500/20">
+        Apply to Join
+      </a>
+      <a href="#roster" class="px-8 py-4 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-white font-bold uppercase tracking-wider rounded transition">
+        View Roster
+      </a>
+    </div>
+
+    <!-- HUD Stats Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-slate-800">
+      <div class="p-4 bg-slate-900/60 border border-slate-800 rounded relative">
+        <div class="text-3xl font-black text-amber-500">#12</div>
+        <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Regional Rank</div>
+      </div>
+
+      <div class="p-4 bg-slate-900/60 border border-slate-800 rounded">
+        <div class="text-3xl font-black text-white">88%</div>
+        <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Scrim Winrate</div>
+      </div>
+
+      <div class="p-4 bg-slate-900/60 border border-slate-800 rounded">
+        <div class="text-3xl font-black text-amber-500">24/30</div>
+        <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Roster Slots</div>
+      </div>
+
+      <div class="p-4 bg-slate-900/60 border border-slate-800 rounded">
+        <div class="text-3xl font-black text-white">Tier 1</div>
+        <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Clan Division</div>
+      </div>
+    </div>
 
   </div>
 
