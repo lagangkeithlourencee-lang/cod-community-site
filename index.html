@@ -13,179 +13,260 @@
   
   <style>
     :root {
-      --bg: #080a0f;
-      --panel: #0e131d;
-      --line: #1c2638;
+      --bg: #07090e;
+      --panel: #0d121c;
+      --panel-hover: #131b2a;
+      --line: #1c273a;
       --bone: #f0f4f8;
-      --muted: #6b7a90;
+      --muted: #64748b;
       --gold: #f59e0b;
-      --gold-glow: rgba(245, 158, 11, 0.25);
+      --gold-glow: rgba(245, 158, 11, 0.15);
       --ok: #10b981;
+      --danger: #ef4444;
     }
 
     body {
-      background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 50%), var(--bg);
+      background: radial-gradient(circle at 50% 0%, var(--gold-glow) 0%, transparent 60%), var(--bg);
       color: var(--bone);
       font-family: 'Inter', sans-serif;
     }
 
-    .font-display {
-      font-family: 'Oswald', sans-serif;
-      letter-spacing: 0.04em;
+    .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+    .font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+    /* Scanline & HUD Backdrop */
+    .hud-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      background: linear-gradient(rgba(13, 18, 28, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                  linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+      background-size: 100% 4px, 40px 100%;
     }
 
-    .font-mono {
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
-    .bracket {
-      position: relative;
-    }
+    /* Tactical Frame Brackets */
+    .bracket { position: relative; }
     .bracket::before, .bracket::after {
-      content: '';
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      z-index: 2;
-      border-color: var(--gold);
-      opacity: 0.7;
+      content: ''; position: absolute; width: 10px; height: 10px; z-index: 2;
+      border-color: var(--gold); opacity: 0.8; transition: all 0.2s ease;
     }
     .bracket::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
     .bracket::after { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
+    .bracket:hover::before, .bracket:hover::after { width: 14px; height: 14px; }
   </style>
 </head>
-<body class="min-h-screen relative flex flex-col justify-between">
+<body class="min-h-screen relative flex flex-col justify-between overflow-x-hidden">
 
-  <!-- Header Section -->
-  <header class="relative z-10 border-b border-[var(--line)] bg-[var(--bg)]/80 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+  <div class="hud-overlay"></div>
+
+  <!-- Header / Navigation -->
+  <header class="relative z-20 border-b border-[var(--line)] bg-[var(--bg)]/90 backdrop-blur sticky top-0">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-3 h-3 bg-[var(--gold)] animate-pulse rounded-full"></div>
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-[var(--gold)]"></span>
+        </span>
         <h1 class="font-display text-2xl tracking-wider text-[var(--bone)]">BISAYA COD COMMUNITY</h1>
       </div>
-      <nav class="flex gap-6 font-mono text-sm text-[var(--muted)]">
+      <nav class="flex flex-wrap gap-4 font-mono text-xs text-[var(--muted)]">
         <a href="#scrims" class="hover:text-[var(--gold)] transition-colors">/SCRIMS_N_LOBBIES</a>
-        <a href="#brackets" class="hover:text-[var(--gold)] transition-colors">/TOURNAMENT_BRACKETS</a>
+        <a href="#brackets" class="hover:text-[var(--gold)] transition-colors">/BRACKETS</a>
+        <a href="#leaderboard" class="hover:text-[var(--gold)] transition-colors">/LEADERBOARD</a>
         <a href="#loadouts" class="hover:text-[var(--gold)] transition-colors">/BISAYA_META</a>
         <a href="#join" class="hover:text-[var(--gold)] transition-colors">/APPLY_CLAN</a>
       </nav>
     </div>
   </header>
 
-  <!-- Main Layout -->
-  <main class="relative z-10 max-w-7xl mx-auto px-6 py-10 space-y-12">
+  <!-- Main Grid Content -->
+  <main class="relative z-10 max-w-7xl mx-auto px-6 py-8 space-y-10">
     
-    <!-- Hero / Welcome Banner -->
-    <section class="p-8 bg-[var(--panel)] border border-[var(--line)] bracket text-center space-y-3">
-      <h2 class="font-display text-3xl text-[var(--gold)]">DAGHANG SALAMAT SA PAG-ANHI, BAI!</h2>
-      <p class="text-sm font-mono text-[var(--muted)] max-w-2xl mx-auto">
-        The official terminal for Bisaya Call of Duty players. Join custom scrims, track local tournament brackets, and submit your player application below.
-      </p>
+    <!-- Ticker / Alert Banner -->
+    <section class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <span class="px-2 py-0.5 bg-[var(--gold)] text-black font-mono font-bold text-xs uppercase">NOTICE</span>
+        <p class="text-xs font-mono text-[var(--bone)]">BAI, UNGNA TA! Clan Cup Season 3 Registrations are now OPEN.</p>
+      </div>
+      <button onclick="openModal('recruitment-modal')" class="px-3 py-1 bg-[var(--gold)] text-black font-display text-xs hover:bg-amber-400 transition-colors">
+        REGISTER TEAM
+      </button>
     </section>
 
-    <!-- Scrims & Tournament Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Scrims & Interactive Tournament Brackets Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       
-      <!-- Scrims Section -->
+      <!-- Scrims Feed -->
       <section id="scrims" class="space-y-4">
         <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
-          <h3 class="font-display text-xl text-[var(--bone)]">COMMUNITY SCRIMS & LOBBIES</h3>
-          <span class="text-xs font-mono text-[var(--gold)]">LIVE / SCHEDULED</span>
+          <h3 class="font-display text-xl text-[var(--bone)]">SCRIMS & CUSTOM ROOMS</h3>
+          <span class="text-xs font-mono text-[var(--ok)] animate-pulse">● LIVE LOBBIES</span>
         </div>
         
-        <div id="schedule-container" class="space-y-3">
-          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center">
-            <div>
-              <span class="font-display text-lg block">5v5 Search & Destroy (Custom Lobby)</span>
-              <span class="text-xs font-mono text-[var(--muted)]">HOST: Bai_Slayer12 // MAP: Raid, Summit</span>
+        <div id="scrims-container" class="space-y-3">
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center hover:bg-[var(--panel-hover)] transition-all">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[10px] font-mono bg-emerald-500/10 text-[var(--ok)] border border-emerald-500/20">SnD 5v5</span>
+                <span class="font-display text-lg text-[var(--bone)]">Bai_Slayer12's Lobby</span>
+              </div>
+              <p class="text-xs font-mono text-[var(--muted)]">MAP POOL: Raid, Summit, Standoff</p>
             </div>
-            <button class="px-3 py-1 bg-[var(--gold)] text-black font-display text-xs hover:bg-amber-400">
-              JOIN ROOM
+            <button onclick="rsvpLobby('Bai_Slayer12')" class="px-3 py-2 border border-[var(--gold)] text-[var(--gold)] font-display text-xs hover:bg-[var(--gold)] hover:text-black transition-colors">
+              RSVP ROOM
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Brackets Section -->
+      <!-- Tournament Brackets -->
       <section id="brackets" class="space-y-4">
-        <div class="border-b border-[var(--line)] pb-2">
-          <h3 class="font-display text-xl text-[var(--bone)]">BISAYA CLAN CUP BRACKETS</h3>
+        <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
+          <h3 class="font-display text-xl text-[var(--bone)]">BISAYA CLAN CUP BRACKET</h3>
+          <span class="text-xs font-mono text-[var(--muted)]">QUARTER-FINALS</span>
         </div>
         
         <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-3 font-mono text-xs">
-          <div class="text-[var(--muted)] border-b border-[var(--line)] pb-2">ROUND 1 - KNOCKOUTS</div>
           <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
-            <span>Bisaya Kings Alpha</span>
+            <span class="font-bold text-[var(--bone)]">Bisaya Kings Alpha</span>
             <span class="text-[var(--ok)] font-bold">2 (WIN)</span>
           </div>
-          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)]">
+          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)] opacity-60">
             <span>Cebu COD Elites</span>
             <span>0</span>
           </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Meta Loadouts & Clan Application Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Community Meta Loadouts -->
-      <section id="loadouts" class="md:col-span-2 space-y-4">
-        <div class="border-b border-[var(--line)] pb-2">
-          <h3 class="font-display text-xl text-[var(--bone)]">RECOMMENDED BISAYA META LOADOUTS</h3>
-        </div>
-        <div id="loadouts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket">
-            <h4 class="font-display text-lg text-[var(--gold)]">BP50 / KILO 141 (AGGRESSIVE)</h4>
-            <p class="text-xs font-mono text-[var(--muted)]">SHARE CODE: 1B2C3D4E5F</p>
-            <p class="text-sm mt-2 text-[var(--bone)]">Monolithic Suppressor | No Stock | OWC Laser</p>
-            <span class="text-xs text-[var(--ok)] mt-3 block font-mono">▲ Community Approved</span>
+          <div class="my-2 border-t border-dashed border-[var(--line)]"></div>
+          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
+            <span class="text-[var(--bone)]">Davao Strikers</span>
+            <span class="text-[var(--gold)]">NEXT MATCH</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
+            <span class="text-[var(--bone)]">CDO Snipers</span>
+            <span class="text-[var(--gold)]">NEXT MATCH</span>
           </div>
         </div>
       </section>
+    </div>
 
-      <!-- Enlistment / Clan Join Form -->
-      <section id="join" class="space-y-4">
+    <!-- Leaderboard & Loadouts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Community Leaderboard -->
+      <section id="leaderboard" class="space-y-4">
         <div class="border-b border-[var(--line)] pb-2">
-          <h3 class="font-display text-xl text-[var(--bone)]">JOIN THE CLAN</h3>
+          <h3 class="font-display text-xl text-[var(--bone)]">COMMUNITY LEADERBOARD</h3>
         </div>
-        
-        <div class="p-6 bg-[var(--panel)] border border-[var(--line)] bracket space-y-4">
-          <form action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
-            <div>
-              <label class="block font-mono text-xs text-[var(--muted)] mb-1">IN-GAME NAME (IGN)</label>
-              <input type="text" name="username" placeholder="e.g. Bai_MasterCOD" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2 text-[var(--bone)] focus:border-[var(--gold)] outline-none">
-            </div>
-            
-            <div>
-              <label class="block font-mono text-xs text-[var(--muted)] mb-1">REGION / LOCATION</label>
-              <input type="text" name="location" placeholder="e.g. Cebu / Davao / CDO" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2 text-[var(--bone)] focus:border-[var(--gold)] outline-none">
-            </div>
+        <div class="bg-[var(--panel)] border border-[var(--line)] bracket overflow-x-auto">
+          <table class="w-full text-left font-mono text-xs">
+            <thead class="border-b border-[var(--line)] text-[var(--muted)]">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">IGN</th>
+                <th class="p-3">K/D</th>
+                <th class="p-3">CLAN</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--line)]">
+              <tr>
+                <td class="p-3 text-[var(--gold)]">01</td>
+                <td class="p-3 font-bold text-[var(--bone)]">Bai_Killer</td>
+                <td class="p-3 text-[var(--ok)]">3.12</td>
+                <td class="p-3 text-[var(--muted)]">Bisaya Kings</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-[var(--gold)]">02</td>
+                <td class="p-3 font-bold text-[var(--bone)]">Bai_Slayer12</td>
+                <td class="p-3 text-[var(--ok)]">2.85</td>
+                <td class="p-3 text-[var(--muted)]">Bisaya Kings</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-            <div>
-              <label class="block font-mono text-xs text-[var(--muted)] mb-1">MAIN ROLE</label>
-              <select name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2 text-[var(--bone)] focus:border-[var(--gold)] outline-none">
-                <option value="assault">Assault / Slayer</option>
-                <option value="sniper">Sniper / Anchor</option>
-                <option value="support">Objective Player</option>
-              </select>
+      <!-- Meta Loadouts -->
+      <section id="loadouts" class="lg:col-span-2 space-y-4">
+        <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
+          <h3 class="font-display text-xl text-[var(--bone)]">BISAYA META GUNSMITH</h3>
+          <span class="text-xs font-mono text-[var(--gold)]">VOTED BY COMMUNITY</span>
+        </div>
+        <div id="loadouts-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-2 hover:bg-[var(--panel-hover)] transition-all">
+            <div class="flex justify-between items-start">
+              <h4 class="font-display text-lg text-[var(--gold)]">BP50 — "Agresibo"</h4>
+              <button onclick="copyCode('BP50-88329')" class="text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)]">COPY CODE</button>
             </div>
-
-            <!-- Cloudflare Turnstile -->
-            <div class="cf-turnstile my-4" data-sitekey="YOUR_TURNSTILE_SITE_KEY"></div>
-
-            <button type="submit" class="w-full py-2 bg-[var(--gold)] text-black font-display hover:bg-amber-400 transition-colors">
-              SUBMIT APPLICATION
-            </button>
-          </form>
+            <p class="text-xs font-mono text-[var(--muted)]">CODE: BP50-88329</p>
+            <p class="text-xs text-[var(--bone)]">Monolithic Suppressor | No Stock | OWC Laser | 60 Rnd Mag</p>
+            <div class="pt-2 flex justify-between items-center border-t border-[var(--line)] text-xs font-mono">
+              <span class="text-[var(--ok)]">▲ Approved</span>
+              <button onclick="upvoteLoadout(this)" class="hover:text-[var(--gold)]">▲ <span class="votes">142</span> Votes</button>
+            </div>
+          </div>
         </div>
       </section>
     </div>
 
+    <!-- Clan Enlistment Section -->
+    <section id="join" class="space-y-4 max-w-xl mx-auto">
+      <div class="border-b border-[var(--line)] pb-2 text-center">
+        <h3 class="font-display text-2xl text-[var(--bone)]">JOIN THE BISAYA CLAN</h3>
+        <p class="text-xs font-mono text-[var(--muted)]">PERSISTED TO CLOUDFLARE D1 DATABASE</p>
+      </div>
+      
+      <div class="p-6 bg-[var(--panel)] border border-[var(--line)] bracket">
+        <form action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
+          <div>
+            <label class="block font-mono text-xs text-[var(--muted)] mb-1">IN-GAME NAME (IGN)</label>
+            <input type="text" name="username" placeholder="e.g. Bai_MasterCOD" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+          </div>
+          
+          <div>
+            <label class="block font-mono text-xs text-[var(--muted)] mb-1">LOCATION / PROVINCE</label>
+            <input type="text" name="location" placeholder="e.g. Cebu / Davao / CDO" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+          </div>
+
+          <div>
+            <label class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY PLAYSTYLE</label>
+            <select name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+              <option value="assault">Assault / Slayer</option>
+              <option value="sniper">Sniper / Anchor</option>
+              <option value="support">Objective Player</option>
+            </select>
+          </div>
+
+          <!-- Cloudflare Turnstile CAPTCHA -->
+          <div class="cf-turnstile my-4 flex justify-center" data-sitekey="YOUR_TURNSTILE_SITE_KEY"></div>
+
+          <button type="submit" class="w-full py-3 bg-[var(--gold)] text-black font-display font-bold hover:bg-amber-400 transition-colors">
+            SUBMIT CREDENTIALS
+          </button>
+        </form>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="relative z-10 border-t border-[var(--line)] py-4 text-center font-mono text-xs text-[var(--muted)]">
-    BISAYA CALL OF DUTY COMMUNITY TERMINAL // POWERED BY CLOUDFLARE WORKERS
+  <!-- Interactive Scripts -->
+  <script>
+    function copyCode(code) {
+      navigator.clipboard.writeText(code);
+      alert('Gunsmith Code Copied: ' + code);
+    }
+
+    function upvoteLoadout(btn) {
+      const voteSpan = btn.querySelector('.votes');
+      if (voteSpan) {
+        voteSpan.textContent = parseInt(voteSpan.textContent) + 1;
+        btn.classList.add('text-[var(--gold)]');
+      }
+    }
+
+    function rsvpLobby(host) {
+      alert('RSVP confirmed for ' + host + '\'s lobby! Host details sent.');
+    }
+  </script>
+
+  <footer class="relative z-10 border-t border-[var(--line)] py-6 text-center font-mono text-xs text-[var(--muted)]">
+    BISAYA CALL OF DUTY COMMUNITY TERMINAL // POWERED BY CLOUDFLARE WORKERS, D1 & KV
   </footer>
 
 </body>
