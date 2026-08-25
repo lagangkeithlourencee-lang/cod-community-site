@@ -32,8 +32,14 @@
       font-family: 'Inter', sans-serif;
     }
 
-    .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.04em; }
-    .font-mono { font-family: 'IBM Plex Mono', monospace; }
+    .font-display {
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .font-mono {
+      font-family: 'IBM Plex Mono', monospace;
+    }
 
     /* Animated HUD Overlay */
     .hud-grid {
@@ -48,377 +54,168 @@
       mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black, transparent 85%);
     }
 
-    /* Modern Reticle Frames */
-    .bracket { position: relative; }
+    /* Reticle Frames */
+    .bracket {
+      position: relative;
+    }
     .bracket::before, .bracket::after, .bracket > .bl::before, .bracket > .br::before {
-      content: ''; position: absolute; width: 10px; height: 10px; z-index: 2;
-      border-color: var(--blaze); opacity: 0.7; transition: all 0.2s ease;
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      z-index: 2;
+      border-color: var(--blaze);
+      opacity: 0.7;
+      transition: all 0.2s ease;
     }
     .bracket::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
     .bracket::after { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
     .bracket > .bl::before { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
     .bracket > .br::before { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
-    
-    .bracket:hover::before, .bracket:hover::after,
-    .bracket:hover > .bl::before, .bracket:hover > .br::before {
-      opacity: 1; width: 14px; height: 14px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    }
-
-    .btn-blaze {
-      background: var(--blaze);
-      color: #120600;
-      box-shadow: 0 0 15px var(--blaze-glow);
-      transition: all 0.15s ease;
-    }
-    .btn-blaze:hover {
-      filter: brightness(1.15);
-      box-shadow: 0 0 25px rgba(255, 92, 31, 0.45);
-      transform: translateY(-1px);
-    }
-
-    .btn-outline {
-      border: 1px solid var(--olive);
-      color: var(--bone);
-      transition: all 0.15s ease;
-    }
-    .btn-outline:hover {
-      border-color: var(--blaze);
-      background: rgba(255, 92, 31, 0.08);
-      color: #fff;
-    }
-
-    /* Modal Animation */
-    #applyModal {
-      transition: opacity 0.2s ease, visibility 0.2s ease;
-      opacity: 0;
-      visibility: hidden;
-    }
-    #applyModal.open {
-      opacity: 1;
-      visibility: visible;
-    }
   </style>
 </head>
-<body class="antialiased min-h-screen relative flex flex-col justify-between">
+<body class="min-h-screen relative flex flex-col justify-between">
 
   <div class="hud-grid"></div>
 
-  <!-- NAVIGATION -->
-  <nav class="sticky top-0 z-40 border-b border-[var(--line)] bg-[#070907]/85 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-5 py-3.5 flex items-center justify-between">
+  <!-- Header Section -->
+  <header class="relative z-10 border-b border-[var(--line)] bg-[var(--bg)]/80 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 grid place-items-center bg-[var(--blaze)] text-[#120600] font-mono font-bold text-xs shadow-[0_0_12px_var(--blaze-glow)]">141</div>
-        <span class="font-display text-xl tracking-widest uppercase">Task Force <span class="text-[var(--blaze)]">141</span></span>
+        <div class="w-3 h-3 bg-[var(--blaze)] animate-pulse"></div>
+        <h1 class="font-display text-2xl tracking-wider text-[var(--bone)]">TASK FORCE 141</h1>
       </div>
-      
-      <div class="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">
-        <a href="#roster" class="hover:text-[var(--blaze)] transition">Roster</a>
-        <a href="#loadouts" class="hover:text-[var(--blaze)] transition">Gunsmith Terminal</a>
-        <a href="#events" class="hover:text-[var(--blaze)] transition">Deployments</a>
-        <a href="#rules" class="hover:text-[var(--blaze)] transition">S.O.P.</a>
-      </div>
-
-      <button onclick="openApply()" class="btn-blaze font-mono text-[11px] uppercase tracking-widest px-5 py-2.5 font-semibold">
-        Apply Now
-      </button>
-    </div>
-  </nav>
-
-  <!-- HERO SECTION -->
-  <header class="relative z-10 max-w-6xl mx-auto px-5 pt-16 pb-12 w-full">
-    <div class="flex flex-wrap items-center gap-3 mb-6">
-      <span class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.2em] text-[var(--ok)] border border-[var(--olive)] bg-[var(--olive-glow)] px-3 py-1">
-        <span class="w-2 h-2 rounded-full bg-[var(--ok)] animate-ping"></span> Scrim Roster Active
-      </span>
-      <span class="font-mono text-[10px] uppercase tracking-[.2em] text-[var(--muted)] border border-[var(--line)] px-3 py-1">
-        Tier 1 Regional Bracket
-      </span>
-    </div>
-
-    <h1 class="font-display uppercase text-6xl md:text-8xl leading-[0.9] max-w-4xl tracking-tight">
-      Dominate The Meta.<br><span class="text-[var(--blaze)]">Execute Objectives.</span>
-    </h1>
-    
-    <p class="mt-6 max-w-2xl text-base text-[var(--muted)] leading-relaxed">
-      Competitive Call of Duty: Mobile operations squad focusing on hardpoint rotations, tournament scrims, and gunsmith theory. 
-    </p>
-
-    <!-- METRIC CARDS -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
-      <div class="panel bracket p-5">
-        <span class="bl"></span><span class="br"></span>
-        <div class="font-mono text-[10px] uppercase text-[var(--blaze)] tracking-widest mb-1">Regional Rank</div>
-        <div class="font-display text-4xl text-[var(--bone)]">#12</div>
-      </div>
-      <div class="panel bracket p-5">
-        <span class="bl"></span><span class="br"></span>
-        <div class="font-mono text-[10px] uppercase text-[var(--muted)] tracking-widest mb-1">Scrim Winrate</div>
-        <div class="font-display text-4xl text-[var(--ok)]">88%</div>
-      </div>
-      <div class="panel bracket p-5">
-        <span class="bl"></span><span class="br"></span>
-        <div class="font-mono text-[10px] uppercase text-[var(--blaze)] tracking-widest mb-1">Roster Capacity</div>
-        <div class="font-display text-4xl">24<span class="text-xl text-[var(--muted)]">/30</span></div>
-      </div>
-      <div class="panel bracket p-5">
-        <span class="bl"></span><span class="br"></span>
-        <div class="font-mono text-[10px] uppercase text-[var(--muted)] tracking-widest mb-1">Active Division</div>
-        <div class="font-display text-4xl text-[var(--bone)]">Tier 1</div>
-      </div>
+      <nav class="flex gap-6 font-mono text-sm text-[var(--muted)]">
+        <a href="#loadouts" class="hover:text-[var(--blaze)] transition-colors">/META_GUNSMITH</a>
+        <a href="#schedule" class="hover:text-[var(--blaze)] transition-colors">/MATCH_SCHEDULE</a>
+        <a href="#recruitment" class="hover:text-[var(--blaze)] transition-colors">/RECRUITMENT</a>
+      </nav>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main class="relative z-10 max-w-6xl mx-auto px-5 pb-20 space-y-12 w-full">
-
-    <!-- INTERACTIVE GUNSMITH TERMINAL FEATURE -->
-    <section id="loadouts" class="panel bracket p-6 md:p-8">
-      <span class="bl"></span><span class="br"></span>
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-[var(--line)] pb-4">
-        <div>
-          <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--blaze)]">Tactical Armory</span>
-          <h2 class="font-display uppercase text-2xl tracking-wide">Interactive Gunsmith Terminal</h2>
+  <!-- Main Grid Layout -->
+  <main class="relative z-10 max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Left/Center: Leaderboards & Meta Gunsmith -->
+    <section id="loadouts" class="md:col-span-2 space-y-6">
+      <div class="flex items-center justify-between border-b border-[var(--line)] pb-2">
+        <h2 class="font-display text-xl text-[var(--bone)]">COMMUNITY META LOADOUTS</h2>
+        <span class="text-xs font-mono text-[var(--muted)]">SOURCE: CLOUDFLARE D1</span>
+      </div>
+      
+      <div id="loadouts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="p-4 bg-[var(--panel)] border border-[var(--line)] text-xs font-mono text-[var(--muted)]">
+          INITIALIZING D1 DATA FEED...
         </div>
-        <!-- Loadout Switcher Tabs -->
-        <div class="flex gap-2 font-mono text-xs" id="gunsmithTabs">
-          <button onclick="switchBuild('BP50')" id="tab-BP50" class="btn-blaze px-4 py-2 uppercase font-semibold">BP50 AR</button>
-          <button onclick="switchBuild('DRH')" id="tab-DRH" class="btn-outline px-4 py-2 uppercase font-semibold">DR-H AR</button>
-          <button onclick="switchBuild('DLQ33')" id="tab-DLQ33" class="btn-outline px-4 py-2 uppercase font-semibold">DL Q33 Sniper</button>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Match Schedule & Recruitment Form -->
+    <section class="space-y-8">
+      
+      <!-- Match Schedule -->
+      <div id="schedule" class="space-y-4">
+        <div class="border-b border-[var(--line)] pb-2">
+          <h2 class="font-display text-xl text-[var(--bone)]">UPCOMING SCRIMS</h2>
+          <span class="text-xs font-mono text-[var(--muted)]">AUTO-CONVERTED TO LOCAL TIME</span>
+        </div>
+        <div id="schedule-container" class="bg-[var(--panel)] border border-[var(--line)] divide-y divide-[var(--line)]">
+          <div class="p-3 text-xs font-mono text-[var(--muted)]">FETCHING MATCH SCHEDULE...</div>
         </div>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6 items-center">
-        <div class="space-y-4 md:col-span-2">
-          <div class="flex items-center gap-3">
-            <h3 id="buildTitle" class="font-display text-3xl text-[var(--blaze)]">BP50 — Aggressive Flex</h3>
-            <span id="buildCategory" class="font-mono text-[10px] uppercase border border-[var(--blaze)] px-2 py-0.5 text-[var(--blaze)]">Assault Rifle</span>
+      <!-- Turnstile Verified Application Form -->
+      <div id="recruitment" class="p-6 bg-[var(--panel)] border border-[var(--line)] bracket space-y-4">
+        <div class="bl"></div><div class="br"></div>
+        <h3 class="font-display text-lg text-[var(--blaze)]">ENLISTMENT APPLICATION</h3>
+        
+        <form action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
+          <div>
+            <label class="block font-mono text-xs text-[var(--muted)] mb-1">OPERATOR ID / IGN</label>
+            <input type="text" name="username" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2 text-[var(--bone)] focus:border-[var(--blaze)] outline-none">
           </div>
-          <p id="buildDesc" class="text-sm text-[var(--muted)]">High rate of fire setup tailored for close-to-medium Hardpoint holds and entry ops.</p>
           
-          <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
-            <div class="bg-[var(--bg)] p-3 border border-[var(--line)]">
-              <span class="text-[var(--muted)] block text-[10px] uppercase">Muzzle / Barrel</span>
-              <span id="attachMuzzle" class="font-semibold text-[var(--bone)]">Agency Suppressor / Leroy 438mm</span>
-            </div>
-            <div class="bg-[var(--bg)] p-3 border border-[var(--line)]">
-              <span class="text-[var(--muted)] block text-[10px] uppercase">Stock / Optics</span>
-              <span id="attachStock" class="font-semibold text-[var(--bone)]">Removal Stock</span>
-            </div>
-            <div class="bg-[var(--bg)] p-3 border border-[var(--line)]">
-              <span class="text-[var(--muted)] block text-[10px] uppercase">Ammunition</span>
-              <span id="attachMag" class="font-semibold text-[var(--bone)]">60 Rnd Mag</span>
-            </div>
-            <div class="bg-[var(--bg)] p-3 border border-[var(--line)]">
-              <span class="text-[var(--muted)] block text-[10px] uppercase">Rear Grip / Underbarrel</span>
-              <span id="attachGrip" class="font-semibold text-[var(--bone)]">Firm Grip Tape</span>
-            </div>
+          <div>
+            <label class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY ROLE</label>
+            <select name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2 text-[var(--bone)] focus:border-[var(--blaze)] outline-none">
+              <option value="assault">Assault / Slayer</option>
+              <option value="sniper">Sniper / Anchor</option>
+              <option value="support">Obj / Support</option>
+            </select>
           </div>
-        </div>
 
-        <div class="panel p-5 bg-[var(--bg)] flex flex-col items-center justify-center text-center space-y-4 border border-[var(--line)]">
-          <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">Shareable Gunsmith Code</span>
-          <div id="buildCodeDisplay" class="font-mono text-lg font-bold text-[var(--blaze)] tracking-wider">BP50-1B2C3D</div>
-          <button onclick="copyCurrentCode()" class="btn-blaze w-full font-mono text-xs uppercase py-2.5 tracking-widest font-semibold">
-            Copy Code
+          <!-- Cloudflare Turnstile -->
+          <div class="cf-turnstile my-4" data-sitekey="YOUR_TURNSTILE_SITE_KEY"></div>
+
+          <button type="submit" class="w-full py-2 bg-[var(--olive)] text-[var(--bone)] font-display hover:bg-[var(--blaze)] transition-colors">
+            SUBMIT CREDENTIALS
           </button>
-        </div>
+        </form>
       </div>
+
     </section>
-
-    <!-- OPERATIONAL ROSTER TABLE -->
-    <section id="roster" class="panel bracket p-6">
-      <span class="bl"></span><span class="br"></span>
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="font-display uppercase text-2xl tracking-wide">Active Operational Roster</h2>
-        <span class="font-mono text-[11px] text-[var(--muted)] uppercase">Updated Live</span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] border-b border-[var(--line)]">
-              <th class="pb-3 pr-4">Operator</th>
-              <th class="pb-3 pr-4">Player UID</th>
-              <th class="pb-3 pr-4">Squad Role</th>
-              <th class="pb-3">Device Platform</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[var(--line)] font-mono text-xs">
-            <tr class="hover:bg-[var(--panel-hover)] transition">
-              <td class="py-3.5 pr-4 font-sans font-semibold text-[var(--bone)] flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[var(--ok)]"></span>Ghost_CODM
-              </td>
-              <td class="py-3.5 pr-4 text-[var(--muted)]">674918239012384712</td>
-              <td class="py-3.5 pr-4"><span class="bg-[var(--blaze)] text-[#120600] px-2 py-0.5 font-bold text-[10px] uppercase">Leader</span></td>
-              <td class="py-3.5 text-[var(--muted)]">iPad Pro 12.9</td>
-            </tr>
-            <tr class="hover:bg-[var(--panel-hover)] transition">
-              <td class="py-3.5 pr-4 font-sans font-semibold text-[var(--bone)] flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[var(--ok)]"></span>Soap_MBL
-              </td>
-              <td class="py-3.5 pr-4 text-[var(--muted)]">682910394810293847</td>
-              <td class="py-3.5 pr-4"><span class="border border-[var(--olive)] text-[var(--ok)] px-2 py-0.5 text-[10px] uppercase">Co-Leader</span></td>
-              <td class="py-3.5 text-[var(--muted)]">Android (REDMAGIC)</td>
-            </tr>
-            <tr class="hover:bg-[var(--panel-hover)] transition">
-              <td class="py-3.5 pr-4 font-sans font-semibold text-[var(--bone)] flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[var(--ok)]"></span>Price_Sniper
-              </td>
-              <td class="py-3.5 pr-4 text-[var(--muted)]">691820394810293812</td>
-              <td class="py-3.5 pr-4"><span class="border border-[var(--olive)] text-[var(--ok)] px-2 py-0.5 text-[10px] uppercase">Officer</span></td>
-              <td class="py-3.5 text-[var(--muted)]">iPhone 15 Pro</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
   </main>
 
-  <!-- RECRUITMENT MODAL -->
-  <div id="applyModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div onclick="closeApply()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-    <div class="panel bracket w-full max-w-lg p-6 relative z-10 bg-[var(--panel)] shadow-2xl border border-[var(--line)]">
-      <span class="bl"></span><span class="br"></span>
-      
-      <div class="flex justify-between items-start mb-6">
-        <div>
-          <span class="font-mono text-[10px] uppercase text-[var(--blaze)] tracking-widest">Recruitment Terminal</span>
-          <h2 class="font-display uppercase text-3xl">Apply for TF141</h2>
-        </div>
-        <button onclick="closeApply()" class="font-mono text-[var(--muted)] hover:text-[var(--blaze)] text-xl">✕</button>
-      </div>
+  <footer class="relative z-10 border-t border-[var(--line)] py-4 text-center font-mono text-xs text-[var(--muted)]">
+    TASK FORCE 141 // POWERED BY CLOUDFLARE WORKERS, D1 & KV
+  </footer>
 
-      <form id="joinForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">In-Game Name</label>
-          <input type="text" id="playerName" required placeholder="e.g. Ghost_CODM" class="w-full bg-[var(--bg)] border border-[var(--line)] px-4 py-2.5 text-sm rounded-none focus:border-[var(--blaze)] focus:outline-none text-[var(--bone)]">
-        </div>
-        <div>
-          <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">Character UID (18 Digits)</label>
-          <input type="text" id="characterUid" pattern="\d{18}" required placeholder="e.g. 674918239012384712" class="w-full bg-[var(--bg)] border border-[var(--line)] px-4 py-2.5 text-sm font-mono rounded-none focus:border-[var(--blaze)] focus:outline-none text-[var(--bone)]">
-        </div>
-        <div>
-          <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">Primary Device</label>
-          <select id="deviceType" class="w-full bg-[var(--bg)] border border-[var(--line)] px-4 py-2.5 text-sm rounded-none focus:border-[var(--blaze)] focus:outline-none text-[var(--bone)]">
-            <option value="iOS (iPhone/iPad)">iOS (iPhone/iPad)</option>
-            <option value="Android Phone/Tablet">Android Phone/Tablet</option>
-            <option value="PC Emulator">PC Emulator (Gameloop)</option>
-          </select>
-        </div>
-
-        <div class="pt-2">
-          <button type="submit" id="submitBtn" class="btn-blaze w-full font-mono text-xs uppercase tracking-widest py-3 font-semibold">
-            Submit Tactical Record
-          </button>
-        </div>
-      </form>
-      <div id="formFeedback" class="mt-4 font-mono text-xs text-center hidden"></div>
-    </div>
-  </div>
-
+  <!-- Dynamic Cloudflare Endpoint Script -->
   <script>
-    // Interactive Gunsmith Store
-    const builds = {
-      'BP50': {
-        title: 'BP50 — Aggressive Flex',
-        category: 'Assault Rifle',
-        desc: 'High rate of fire setup tailored for close-to-medium Hardpoint holds and entry ops.',
-        muzzle: 'Agency Suppressor / Leroy 438mm',
-        stock: 'Removal Stock',
-        mag: '60 Rnd Mag',
-        grip: 'Firm Grip Tape',
-        code: 'BP50-1B2C3D'
-      },
-      'DRH': {
-        title: 'DR-H — 3-Tap Anchor',
-        category: 'Assault Rifle',
-        desc: 'Maximized damage range and stability for anchoring long-range lanes.',
-        muzzle: 'Monolithic Suppressor',
-        stock: 'OWC Marksman / No Stock',
-        mag: '25 Rnd OTM Mag',
-        grip: 'Tactical Laser',
-        code: 'DRH-4E5F6G'
-      },
-      'DLQ33': {
-        title: 'DL Q33 — Scrim Precision',
-        category: 'Sniper Rifle',
-        desc: 'Fastest ADS response time configured for quickscopes and SnD opening picks.',
-        muzzle: 'MIP Light Flash Guard',
-        stock: 'OWC Skeleton Stock',
-        mag: 'Fast Reload',
-        grip: 'FMJ Perk',
-        code: 'DLQ-9H8I7J'
-      }
-    };
+    const WORKER_BASE_URL = 'https://your-worker.your-subdomain.workers.dev';
 
-    let activeBuildKey = 'BP50';
-
-    function switchBuild(key) {
-      activeBuildKey = key;
-      const data = builds[key];
-
-      document.getElementById('buildTitle').innerText = data.title;
-      document.getElementById('buildCategory').innerText = data.category;
-      document.getElementById('buildDesc').innerText = data.desc;
-      document.getElementById('attachMuzzle').innerText = data.muzzle;
-      document.getElementById('attachStock').innerText = data.stock;
-      document.getElementById('attachMag').innerText = data.mag;
-      document.getElementById('attachGrip').innerText = data.grip;
-      document.getElementById('buildCodeDisplay').innerText = data.code;
-
-      ['BP50', 'DRH', 'DLQ33'].forEach(k => {
-        const btn = document.getElementById(`tab-${k}`);
-        if (k === key) {
-          btn.className = "btn-blaze px-4 py-2 uppercase font-semibold";
-        } else {
-          btn.className = "btn-outline px-4 py-2 uppercase font-semibold";
+    async function loadMetaLoadouts() {
+      const container = document.getElementById('loadouts-container');
+      try {
+        const res = await fetch(`${WORKER_BASE_URL}/api/loadouts`);
+        const loadouts = await res.json();
+        
+        if (!container) return;
+        container.innerHTML = loadouts.map(item => `
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket">
+            <div class="bl"></div><div class="br"></div>
+            <h4 class="font-display text-lg text-[var(--blaze)]">${item.weapon_name}</h4>
+            <p class="text-xs font-mono text-[var(--muted)]">CODE: ${item.share_code}</p>
+            <p class="text-sm mt-2 text-[var(--bone)]">${item.attachments.join(' | ')}</p>
+            <span class="text-xs text-[var(--ok)] mt-3 block font-mono">▲ ${item.upvotes} Votes</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        if (container) {
+          container.innerHTML = `<div class="p-4 text-xs font-mono text-[var(--muted)]">CONNECT WORKER ENDPOINT TO FETCH LOADOUTS.</div>`;
         }
-      });
+      }
     }
 
-    function copyCurrentCode() {
-      const code = builds[activeBuildKey].code;
-      navigator.clipboard.writeText(code);
-      alert(`Copied Gunsmith Code: ${code}`);
+    async function loadSchedule() {
+      const container = document.getElementById('schedule-container');
+      try {
+        const res = await fetch(`${WORKER_BASE_URL}/api/matches`);
+        const matches = await res.json();
+        
+        if (!container) return;
+        container.innerHTML = matches.map(match => `
+          <div class="flex justify-between items-center p-3">
+            <div>
+              <span class="font-display text-sm text-[var(--bone)]">${match.opponent}</span>
+              <span class="text-xs font-mono block text-[var(--muted)]">${new Date(match.timestamp).toLocaleString()}</span>
+            </div>
+            <button onclick="rsvpMatch('${match.id}')" class="text-xs px-2 py-1 border border-[var(--olive)] hover:bg-[var(--olive)] font-mono">
+              RSVP
+            </button>
+          </div>
+        `).join('');
+      } catch (err) {
+        if (container) {
+          container.innerHTML = `<div class="p-3 text-xs font-mono text-[var(--muted)]">CONNECT WORKER ENDPOINT TO FETCH SCHEDULE.</div>`;
+        }
+      }
     }
 
-    // Modal Control
-    function openApply() {
-      document.getElementById('applyModal').classList.add('open');
-    }
-    function closeApply() {
-      document.getElementById('applyModal').classList.remove('open');
-    }
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeApply(); });
-
-    // Form Submission Logic
-    function handleFormSubmit(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      const feedback = document.getElementById('formFeedback');
-      
-      btn.disabled = true;
-      btn.innerText = "TRANSMITTING DATA...";
-      feedback.classList.remove('hidden');
-      feedback.className = "mt-4 font-mono text-xs text-center text-[var(--blaze)]";
-      feedback.innerText = "Encrypting tactical records...";
-
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerText = "SUBMIT TACTICAL RECORD";
-        feedback.className = "mt-4 font-mono text-xs text-center text-[var(--ok)]";
-        feedback.innerText = "Application Transmitted. Awaiting Discord verification.";
-        document.getElementById('joinForm').reset();
-        setTimeout(closeApply, 2000);
-      }, 1200);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMetaLoadouts();
+      loadSchedule();
+    });
   </script>
 </body>
 </html>
