@@ -1,0 +1,19 @@
+name = "codm-form-handler"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# ---------------------------------------------------------------
+# D1 database binding
+# Get the database_id after running:
+#   wrangler d1 create bisaya-codm
+# It prints a database_id — paste it below.
+# ---------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "bisaya-codm"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# ---------------------------------------------------------------
+# Secrets (do NOT put these here — set via CLI or dashboard):
+#   wrangler secret put TURNSTILE_SECRET
+# ---------------------------------------------------------------
