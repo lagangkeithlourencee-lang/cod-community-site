@@ -1,1 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TF141 — Task Force 141 // CODM Operations</title>
 
+<meta property="og:type" content="website">
+<meta property="og:title" content="TF141 — Call of Duty: Mobile Esports Clan">
+<meta property="og:description" content="Official operations terminal for Task Force 141 CODM squad. Roster, meta builds, deployment schedule, and recruitment.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80">
+<meta property="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:        #0a0d09;
+    --panel:     #12160f;
+    --panel-2:   #171c13;
+    --line:      #2a3123;
+    --bone:      #e9e8dd;
+    --muted:     #8b9180;
+    --olive:     #5c6b45;
+    --olive-dim: #3a4530;
+    --blaze:     #ff5c1f;
+    --blaze-dim: #7a2d10;
+    --ok:        #8fae5c;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scrollbar-color: var(--olive) var(--bg); }
+  body{
+    margin:0;
+    background:
+      linear-gradient(180deg, rgba(255,92,31,0.05), transparent 260px),
+      var(--bg);
+    color:var(--bone);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  .font-display{ font-family:'Oswald',sans-serif; letter-spacing:.02em; }
+  .font-mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* HUD scanline / grid texture, fixed so it doesn't scroll with long content */
+  .hud-grid{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      linear-gradient(rgba(92,107,69,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(92,107,69,0.07) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 75%);
+  }
+
+  /* Signature corner-bracket frame — reticle motif reused across panels */
+  .bracket{ position:relative; }
+  .bracket::before, .bracket::after,
+  .bracket > .bl::before, .bracket > .br::before{
+    content:''; position:absolute; width:14px; height:14px; z-index:2;
+    border-color: var(--blaze); opacity:.65;
+  }
+  .bracket::before{ top:-1px; left:-1px; border-top:2px solid; border-left:2px solid; }
+  .bracket::after{ top:-1px; right:-1px; border-top:2px solid; border-right:2px solid; }
+  .bracket > .bl::before{ bottom:-1px; left:-1px; border-bottom:2px solid; border-left:2px solid; }
+  .bracket > .br::before{ bottom:-1px; right:-1px; border-bottom:2px solid; border-right:2px solid; }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    position:relative;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.65rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--blaze);
+  }
+
+  .divider-tick{
+    display:flex; align-items:center; gap:.6rem;
+  }
+  .divider-tick::after{
+    content:''; flex:1; height:1px;
+    background:repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 10px);
+  }
+
+  .status-dot{ width:7px; height:7px; border-radius:1px; display:inline-block; }
+
+  .btn-blaze{
+    background:var(--blaze); color:#160800; font-weight:600;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  .btn-blaze:hover{ filter:brightness(1.12); }
+  .btn-blaze:active{ transform:translateY(1px); }
+
+  .btn-outline{
+    border:1px solid var(--olive); color:var(--bone);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .btn-outline:hover{ border-color:var(--blaze); background:rgba(255,92,31,0.06); }
+
+  .row-op:hover{ background:rgba(92,107,69,0.08); }
+
+  ::selection{ background:var(--blaze); color:#160800; }
+
+  /* Modal */
+  #applyModal{
+    position:fixed; inset:0; z-index:100;
+    display:none;
+    align-items:flex-start; justify-content:center;
+    padding: 5vh 1rem;
+    overflow-y:auto;
+  }
+  #applyModal.open{ display:flex; }
+  #applyBackdrop{
+    position:fixed; inset:0;
+    background:rgba(4,5,3,0.82);
+    backdrop-filter: blur(2px);
+  }
+  #applyPanel{
+    position:relative; z-index:2;
+    animation: riseIn .18s ease-out;
+  }
+  @keyframes riseIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  input, select{
+    background:#0d100b; border:1px solid var(--line); color:var(--bone);
+  }
+  input:focus, select:focus{
+    outline:none; border-color:var(--blaze);
+    box-shadow:0 0 0 3px rgba(255,92,31,0.15);
+  }
+  input::placeholder{ color:#565c4c; }
+
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--blaze); outline-offset:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<div class="hud-grid"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="relative z-10 border-b border-[var(--line)] bg-[#0a0d09]/90 backdrop-blur-md sticky top-0">
+  <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 grid place-items-center bg-[var(--blaze)] text-[#160800] font-mono font-bold text-xs">141</div>
+      <span class="font-display text-lg tracking-widest uppercase">Task Force <span class="text-[var(--blaze)]">141</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-7 font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">
+      <a href="#roster" class="hover:text-[var(--bone)] transition">Roster</a>
+      <a href="#events" class="hover:text-[var(--bone)] transition">Deployments</a>
+      <a href="#loadouts" class="hover:text-[var(--bone)] transition">Gunsmith</a>
+      <a href="#rules" class="hover:text-[var(--bone)] transition">S.O.P.</a>
+    </div>
+    <button onclick="openApply()" class="btn-blaze font-mono text-[11px] uppercase tracking-widest px-4 py-2">
+      Apply Now
+    </button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="relative z-10 max-w-6xl mx-auto px-5 pt-14 pb-10">
+  <div class="flex flex-wrap items-center gap-3 mb-5">
+    <span class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.2em] text-[var(--ok)] border border-[var(--olive-dim)] px-2.5 py-1">
+      <span class="status-dot bg-[var(--ok)] animate-pulse"></span> Recruitment Open
+    </span>
+    <span class="font-mono text-[10px] uppercase tracking-[.2em] text-[var(--muted)] border border-[var(--line)] px-2.5 py-1">
+      Regional Tier 1
+    </span>
+  </div>
+
+  <h1 class="font-display uppercase text-5xl md:text-7xl leading-[0.95] max-w-3xl">
+    Hold the line.<br>
+    <span class="text-[var(--blaze)]">Take the objective.</span>
+  </h1>
+  <p class="mt-5 max-w-xl text-sm text-[var(--muted)] leading-relaxed">
+    Task Force 141 runs a Call of Duty: Mobile squad built on scrim discipline and Gunsmith theory —
+    not vibes. Below: live roster, deployment schedule, meta loadouts, and how to get in.
+  </p>
+
+  <!-- Readout strip -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-px mt-10 bg-[var(--line)] border border-[var(--line)]">
+    <div class="bg-[#0a0d09] p-4">
+      <div class="eyebrow mb-1">Regional Rank</div>
+      <div class="font-display text-3xl text-[var(--blaze)]">#12</div>
+    </div>
+    <div class="bg-[#0a0d09] p-4">
+      <div class="eyebrow mb-1">Scrim Winrate</div>
+      <div class="font-display text-3xl">88%</div>
+    </div>
+    <div class="bg-[#0a0d09] p-4">
+      <div class="eyebrow mb-1">Roster Slots</div>
+      <div class="font-display text-3xl text-[var(--blaze)]">24<span class="text-[var(--muted)] text-lg">/30</span></div>
+    </div>
+    <div class="bg-[#0a0d09] p-4">
+      <div class="eyebrow mb-1">Division</div>
+      <div class="font-display text-3xl">Tier 1</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="relative z-10 max-w-6xl mx-auto px-5 pb-24 space-y-10">
+
+  <!-- Announcement -->
+  <div class="panel border-l-4 border-l-[var(--blaze)] p-4 flex gap-4 items-start">
+    <span class="font-mono text-[var(--blaze)] text-xs mt-0.5">[!]</span>
+    <div>
+      <div class="font-display uppercase tracking-wide text-[var(--blaze)] text-sm">Clan War — Nodes Active</div>
+      <p class="text-xs text-[var(--muted)] mt-1">Nodes reset tonight at 00:00 UTC. All members log a minimum of 5 Node games in Hardpoint lobbies.</p>
+    </div>
+  </div>
+
+  <!-- Roster -->
+  <section id="roster" class="bracket panel p-6">
+    <span class="bl"></span><span class="br"></span>
+    <div class="divider-tick mb-5">
+      <h2 class="font-display uppercase text-xl tracking-wide whitespace-nowrap">Operational Roster</h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr class="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] border-b border-[var(--line)]">
+            <th class="pb-3 pr-4">Operator</th>
+            <th class="pb-3 pr-4">UID</th>
+            <th class="pb-3 pr-4">Role</th>
+            <th class="pb-3">Platform</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--line)]">
+          <tr class="row-op transition">
+            <td class="py-3 pr-4 font-medium flex items-center gap-2"><span class="status-dot bg-[var(--ok)]"></span>Ghost_CODM</td>
+            <td class="py-3 pr-4 font-mono text-xs text-[var(--muted)]">674918239012384712</td>
+            <td class="py-3 pr-4"><span class="font-mono text-[10px] uppercase bg-[var(--blaze-dim)] text-[var(--blaze)] px-2 py-0.5">Leader</span></td>
+            <td class="py-3 text-xs text-[var(--muted)]">iPad Pro</td>
+          </tr>
+          <tr class="row-op transition">
+            <td class="py-3 pr-4 font-medium flex items-center gap-2"><span class="status-dot bg-[var(--ok)]"></span>Soap_MBL</td>
+            <td class="py-3 pr-4 font-mono text-xs text-[var(--muted)]">682910394810293847</td>
+            <td class="py-3 pr-4"><span class="font-mono text-[10px] uppercase bg-[var(--olive-dim)] text-[var(--ok)] px-2 py-0.5">Co-Leader</span></td>
+            <td class="py-3 text-xs text-[var(--muted)]">Android Phone</td>
+          </tr>
+          <tr class="row-op transition">
+            <td class="py-3 pr-4 font-medium flex items-center gap-2"><span class="status-dot bg-[var(--ok)]"></span>Price_Sniper</td>
+            <td class="py-3 pr-4 font-mono text-xs text-[var(--muted)]">691820394810293812</td>
+            <td class="py-3 pr-4"><span class="font-mono text-[10px] uppercase bg-[var(--olive-dim)] text-[var(--ok)] px-2 py-0.5">Officer</span></td>
+            <td class="py-3 text-xs text-[var(--muted)]">iPhone</td>
+          </tr>
+          <tr class="row-op transition">
+            <td class="py-3 pr-4 font-medium flex items-center gap-2"><span class="status-dot bg-[var(--muted)]"></span>Gaz_Slayer</td>
+            <td class="py-3 pr-4 font-mono text-xs text-[var(--muted)]">671920394819283746</td>
+            <td class="py-3 pr-4"><span class="font-mono text-[10px] uppercase bg-[#20241a] text-[var(--muted)] px-2 py-0.5">Member</span></td>
+            <td class="py-3 text-xs text-[var(--muted)]">Gameloop</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section id="events" class="bracket panel p-6">
+    <span class="bl"></span><span class="br"></span>
+    <div class="divider-tick mb-5">
+      <h2 class="font-display uppercase text-xl tracking-wide whitespace-nowrap">Deployment Schedule</h2>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="bg-[var(--panel-2)] border border-[var(--line)] p-4 hover:border-[var(--blaze)] transition">
+        <div class="flex justify-between items-start mb-2">
+          <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--blaze)]">Competitive MP</span>
+          <span class="font-mono text-[10px] text-[var(--muted)]">SAT · 20:00 UTC</span>
+        </div>
+        <h3 class="font-display text-lg">5v5 Tournament Scrim</h3>
+        <p class="text-xs text-[var(--muted)] mt-1 mb-3">Hardpoint / SnD map rotation against top regional brackets.</p>
+        <div class="text-xs font-mono text-[var(--muted)]">LINEUP · <span class="text-[var(--bone)]">Ghost, Soap, Price, Gaz</span></div>
+      </div>
+
+      <div class="bg-[var(--panel-2)] border border-[var(--line)] p-4 hover:border-[var(--ok)] transition">
+        <div class="flex justify-between items-start mb-2">
+          <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--ok)]">Ranked BR</span>
+          <span class="font-mono text-[10px] text-[var(--muted)]">SUN · 21:00 UTC</span>
+        </div>
+        <h3 class="font-display text-lg">Isolated Squad Grind</h3>
+        <p class="text-xs text-[var(--muted)] mt-1 mb-3">Full squad points push towards Legendary rank tier.</p>
+        <div class="text-xs font-mono text-[var(--muted)]">STATUS · <span class="text-[var(--ok)]">Open Slots</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gunsmith -->
+  <section id="loadouts" class="bracket panel p-6">
+    <span class="bl"></span><span class="br"></span>
+    <div class="divider-tick mb-5">
+      <h2 class="font-display uppercase text-xl tracking-wide whitespace-nowrap">Gunsmith Terminal</h2>
+    </div>
+
+    <div class="space-y-3">
+      <div class="bg-[var(--panel-2)] border border-[var(--line)] p-4 flex flex-wrap justify-between items-center gap-4 hover:border-[var(--blaze)] transition">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-display text-lg">BP50</h3>
+            <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--blaze)]">Assault Rifle</span>
+          </div>
+          <p class="text-xs text-[var(--muted)] mt-1">Agency Suppressor · Leroy 438mm · Removal Stock · 60 Rnd Mag</p>
+        </div>
+        <button onclick="copyCode('BP50-1B2C3D')" class="btn-blaze font-mono text-[11px] uppercase tracking-widest px-4 py-2 whitespace-nowrap">Copy Code</button>
+      </div>
+
+      <div class="bg-[var(--panel-2)] border border-[var(--line)] p-4 flex flex-wrap justify-between items-center gap-4 hover:border-[var(--blaze)] transition">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-display text-lg">DR-H</h3>
+            <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--ok)]">MP Ranked</span>
+          </div>
+          <p class="text-xs text-[var(--muted)] mt-1">Monolithic Suppressor · OWC Marksman · No Stock · 25 Rnd OTM</p>
+        </div>
+        <button onclick="copyCode('DRH-4E5F6G')" class="btn-blaze font-mono text-[11px] uppercase tracking-widest px-4 py-2 whitespace-nowrap">Copy Code</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rules -->
+  <section id="rules" class="bracket panel p-6">
+    <span class="bl"></span><span class="br"></span>
+    <div class="divider-tick mb-5">
+      <h2 class="font-display uppercase text-xl tracking-wide whitespace-nowrap">Standard Operating Procedure</h2>
+    </div>
+    <ul class="grid sm:grid-cols-3 gap-3 text-xs text-[var(--muted)]">
+      <li class="border border-[var(--line)] p-3"><span class="text-[var(--blaze)] font-mono mr-1">01</span>Active Discord attendance during scheduled Clan Wars.</li>
+      <li class="border border-[var(--line)] p-3"><span class="text-[var(--blaze)] font-mono mr-1">02</span>Maintain minimum Legendary rank in MP or BR each season.</li>
+      <li class="border border-[var(--line)] p-3"><span class="text-[var(--blaze)] font-mono mr-1">03</span>Zero tolerance for toxic behavior or unsportsmanlike conduct.</li>
+    </ul>
+  </section>
+
+  <!-- Bottom recruitment CTA -->
+  <section class="bracket panel p-8 text-center">
+    <span class="bl"></span><span class="br"></span>
+    <div class="eyebrow mb-3">6 Slots Remaining</div>
+    <h2 class="font-display uppercase text-3xl md:text-4xl">Ready to deploy?</h2>
+    <p class="text-sm text-[var(--muted)] mt-2 max-w-md mx-auto">Submit your credentials for squad evaluation. Most applicants hear back within 48 hours.</p>
+    <button onclick="openApply()" class="btn-blaze font-mono text-xs uppercase tracking-widest px-6 py-3 mt-6">
+      Apply Now
+    </button>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative z-10 border-t border-[var(--line)] py-8 px-5 mt-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+    <div class="text-center md:text-left">
+      <p class="font-display uppercase tracking-wide text-[var(--bone)]">Task Force 141 — CODM Esports</p>
+      <p class="text-[var(--muted)] mt-1">Not affiliated with or endorsed by Activision or TiMi Studio Group.</p>
+    </div>
+    <div class="flex items-center gap-6 font-mono uppercase tracking-widest text-[var(--muted)]">
+      <a href="https://discord.gg" target="_blank" rel="noopener" class="hover:text-[var(--blaze)] transition">Discord</a>
+      <a href="https://youtube.com" target="_blank" rel="noopener" class="hover:text-[var(--blaze)] transition">YouTube</a>
+      <a href="#" class="hover:text-[var(--blaze)] transition">Top ⬆</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ APPLY MODAL (hidden until "Apply Now" is clicked) ============ -->
+<div id="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
+  <div id="applyBackdrop" onclick="closeApply()"></div>
+
+  <div id="applyPanel" class="bracket panel w-full max-w-md p-6 glow">
+    <span class="bl"></span><span class="br"></span>
+
+    <div class="flex justify-between items-start mb-5">
+      <div>
+        <div class="eyebrow mb-1">Recruitment Terminal</div>
+        <h2 id="applyTitle" class="font-display uppercase text-2xl">Join Task Force 141</h2>
+      </div>
+      <button onclick="closeApply()" aria-label="Close application form" class="font-mono text-[var(--muted)] hover:text-[var(--blaze)] text-lg leading-none px-1">✕</button>
+    </div>
+
+    <form id="joinForm" class="space-y-4">
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">In-Game Name</label>
+        <input type="text" id="playerName" required placeholder="e.g. Ghost_CODM" class="w-full px-3.5 py-2.5 text-sm">
+      </div>
+
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">Character UID (18 digits)</label>
+        <input type="text" id="characterUid" required placeholder="e.g. 674918239012384712" class="w-full px-3.5 py-2.5 text-sm font-mono">
+      </div>
+
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">Discord Username</label>
+        <input type="text" id="discordTag" required placeholder="e.g. ghost_141" class="w-full px-3.5 py-2.5 text-sm">
+      </div>
+
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1">Primary Device</label>
+        <select id="deviceType" class="w-full px-3.5 py-2.5 text-sm">
+          <option value="Android Phone">Android Phone</option>
+          <option value="iOS (iPhone)">iOS (iPhone)</option>
+          <option value="iPad / Tablet">iPad / Tablet</option>
+          <option value="PC Emulator (Gameloop)">PC Emulator (Gameloop)</option>
+        </select>
+      </div>
+
+      <div class="flex justify-center pt-1">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEaEsBKpY-bG5wc7"></div>
+      </div>
+
+      <button type="submit" class="btn-blaze w-full font-mono text-xs uppercase tracking-widest py-3">
+        Submit Application
+      </button>
+    </form>
+
+    <p id="responseMessage" class="mt-4 font-mono text-xs text-center"></p>
+  </div>
+</div>
+
+<script>
+  function copyCode(code){
+    navigator.clipboard.writeText(code);
+    const toast = document.createElement('div');
+    toast.className = 'fixed bottom-5 right-5 bg-[var(--blaze)] text-[#160800] font-mono font-semibold text-xs px-4 py-3 z-[200] uppercase tracking-widest';
+    toast.innerText = `Copied: ${code}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2200);
+  }
+
+  function openApply(){
+    document.getElementById('applyModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeApply(){
+    document.getElementById('applyModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeApply();
+  });
+
+  document.getElementById('joinForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    const name = document.getElementById('playerName').value;
+    const uid = document.getElementById('characterUid').value;
+    const discord = document.getElementById('discordTag').value;
+    const device = document.getElementById('deviceType').value;
+    const msg = document.getElementById('responseMessage');
+
+    const turnstileResponse = (typeof turnstile !== 'undefined') ? turnstile.getResponse() : null;
+    if (!turnstileResponse) {
+      msg.className = "mt-4 font-mono text-xs text-center text-rose-400";
+      msg.innerText = "Complete the security check before submitting.";
+      return;
+    }
+
+    msg.className = "mt-4 font-mono text-xs text-center text-[var(--blaze)]";
+    msg.innerText = "Transmitting application data...";
+
+    // Replace this URL with your actual Cloudflare Worker URL
+    const workerUrl = "https://codm-form-handler.lagang-keithlourencee.workers.dev";
+
+    const payload = { name, uid, discord, device, token: turnstileResponse };
+
+    try {
+      const res = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        msg.className = "mt-4 font-mono text-xs text-center text-[var(--ok)]";
+        msg.innerText = "Application received. Check Discord for updates.";
+        document.getElementById('joinForm').reset();
+        if (typeof turnstile !== 'undefined') turnstile.reset();
+        setTimeout(closeApply, 1600);
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      msg.className = "mt-4 font-mono text-xs text-center text-rose-400";
+      msg.innerText = "Transmission failed. Check network/Worker connection.";
+    }
+  });
+</script>
+
+</body>
+</html>
