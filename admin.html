@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin // Bisaya COD Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e; --panel: #0d121c; --line: #1c273a; --bone: #f0f4f8;
+      --muted: #64748b; --gold: #f59e0b; --ok: #10b981; --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: var(--bone); font-family: 'IBM Plex Mono', monospace; margin: 0; padding: 2rem 1rem; }
+    .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    h1 { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .sub { color: var(--muted); font-size: 0.75rem; margin-bottom: 2rem; }
+    #login-box { background: var(--panel); border: 1px solid var(--line); padding: 2rem; max-width: 360px; margin: 4rem auto; text-align: center; }
+    #login-box input { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--bone); padding: 0.6rem; margin: 1rem 0; font-family: inherit; }
+    #login-box button, .action-btn { background: var(--gold); color: black; border: none; padding: 0.6rem 1rem; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; }
+    #login-box button:hover, .action-btn:hover { opacity: 0.85; }
+    #login-error { color: var(--danger); font-size: 0.75rem; margin-top: 0.5rem; min-height: 1em; }
+    #app-view { display: none; }
+    .app-card { background: var(--panel); border: 1px solid var(--line); padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .app-info div { font-size: 0.8rem; margin-bottom: 0.15rem; }
+    .app-info .ign { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--gold); }
+    .app-info .muted { color: var(--muted); }
+    .status-pill { font-size: 0.65rem; padding: 0.15rem 0.5rem; border: 1px solid var(--line); text-transform: uppercase; }
+    .status-pending { color: var(--gold); border-color: var(--gold); }
+    .status-accepted { color: var(--ok); border-color: var(--ok); }
+    .status-rejected { color: var(--danger); border-color: var(--danger); }
+    .actions { display: flex; gap: 0.5rem; }
+    .btn-accept { background: var(--ok); color: black; }
+    .btn-reject { background: var(--danger); color: white; }
+    .empty { color: var(--muted); text-align: center; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="login-box">
+      <h1>ADMIN ACCESS</h1>
+      <p class="sub">Enter your admin key to continue</p>
+      <input id="admin-key-input" type="password" placeholder="Admin key" autocomplete="off">
+      <button onclick="login()">ENTER</button>
+      <p id="login-error"></p>
+    </div>
+
+    <div id="app-view">
+      <h1>CLAN APPLICATIONS</h1>
+      <p class="sub">Review and process incoming applications</p>
+      <div id="applications-container"><p class="empty">Loading...</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://codm-form-handler.lagang-keithlourencee.workers.dev';
+    let adminKey = sessionStorage.getItem('admin_key') || '';
+
+    if (adminKey) showApp();
+
+    function login() {
+      const val = document.getElementById('admin-key-input').value.trim();
+      if (!val) return;
+      adminKey = val;
+      sessionStorage.setItem('admin_key', val);
+      showApp();
+    }
+
+    function showApp() {
+      document.getElementById('login-box').style.display = 'none';
+      document.getElementById('app-view').style.display = 'block';
+      loadApplications();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('admin_key');
+      location.reload();
+    }
+
+    async function loadApplications() {
+      const container = document.getElementById('applications-container');
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/applications`, {
+          headers: { 'X-Admin-Key': adminKey },
+        });
+        if (res.status === 401) {
+          document.getElementById('login-error').textContent = 'Invalid admin key.';
+          sessionStorage.removeItem('admin_key');
+          document.getElementById('login-box').style.display = 'block';
+          document.getElementById('app-view').style.display = 'none';
+          return;
+        }
+        const { applications } = await res.json();
+        if (!applications.length) {
+          container.innerHTML = '<p class="empty">No applications yet.</p>';
+          return;
+        }
+        container.innerHTML = applications.map(a => `
+          <div class="app-card">
+            <div class="app-info">
+              <div class="ign">${a.ign}</div>
+              <div class="muted">Discord: ${a.discord} · Device: ${a.device || 'Unknown'} · UID: ${a.uid}</div>
+              <div class="muted">${new Date(a.created_at).toLocaleString()}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span class="status-pill status-${a.status}">${a.status}</span>
+              ${a.status === 'pending' ? `
+                <div class="actions">
+                  <button class="action-btn btn-accept" onclick="setStatus(${a.id}, 'accepted')">ACCEPT</button>
+                  <button class="action-btn btn-reject" onclick="setStatus(${a.id}, 'rejected')">REJECT</button>
+                </div>` : ''}
+            </div>
+          </div>`).join('');
+      } catch (err) {
+        container.innerHTML = '<p class="empty">Could not load applications.</p>';
+      }
+    }
+
+    async function setStatus(id, status) {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/applications/${id}/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey },
+          body: JSON.stringify({ status }),
+        });
+        if (!res.ok) throw new Error('Failed to update');
+        loadApplications();
+      } catch (err) {
+        alert('Could not update application status.');
+      }
+    }
+  </script>
+</body>
+</html>
