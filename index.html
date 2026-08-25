@@ -427,23 +427,24 @@
       </div>
 
       <div class="p-6 max-h-[70vh] overflow-y-auto">
-        <form id="apply-form" action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
+        <form id="apply-form" action="https://codm-form-handler.lagang-keithlourencee.workers.dev" method="POST" class="space-y-4 text-sm">
           <div>
             <label for="apply-ign" class="block font-mono text-xs text-[var(--muted)] mb-1">IN-GAME NAME (IGN)</label>
             <input id="apply-ign" type="text" name="username" placeholder="e.g. Operator_01" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
           </div>
 
           <div>
-            <label for="apply-location" class="block font-mono text-xs text-[var(--muted)] mb-1">REGION / CITY</label>
-            <input id="apply-location" type="text" name="location" placeholder="e.g. Cebu, Philippines" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+            <label for="apply-discord" class="block font-mono text-xs text-[var(--muted)] mb-1">DISCORD USERNAME</label>
+            <input id="apply-discord" type="text" name="discord" placeholder="e.g. operator_141" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
           </div>
 
           <div>
-            <label for="apply-role" class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY ROLE</label>
-            <select id="apply-role" name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
-              <option value="assault">Assault / Slayer</option>
-              <option value="sniper">Sniper / Anchor</option>
-              <option value="support">Objective Player</option>
+            <label for="apply-device" class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY DEVICE</label>
+            <select id="apply-device" name="device" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+              <option value="Android Phone">Android Phone</option>
+              <option value="iOS (iPhone)">iOS (iPhone)</option>
+              <option value="iPad / Tablet">iPad / Tablet</option>
+              <option value="PC Emulator (Gameloop)">PC Emulator (Gameloop)</option>
             </select>
           </div>
 
@@ -458,7 +459,7 @@
           <button id="apply-submit" type="submit" class="w-full py-3 bg-[var(--gold)] text-black font-display font-bold hover:bg-amber-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
             SUBMIT APPLICATION
           </button>
-          <p class="text-[10px] font-mono text-[var(--muted)] text-center">Wire this form's action to your live Worker endpoint before launch — submissions currently simulate a response.</p>
+          <p class="text-[10px] font-mono text-[var(--muted)] text-center">Applications go straight to squad leaders via Discord.</p>
         </form>
       </div>
     </div>
@@ -581,21 +582,46 @@
       document.getElementById('leaderboard-empty').classList.toggle('hidden', visibleCount !== 0);
     }
 
-    /* ---------- Apply form submit (simulated) ---------- */
-    document.getElementById('apply-form').addEventListener('submit', function (e) {
+    /* ---------- Apply form submit (live, hits the codm-form-handler Worker) ---------- */
+    const APPLY_WORKER_URL = 'https://codm-form-handler.lagang-keithlourencee.workers.dev';
+
+    document.getElementById('apply-form').addEventListener('submit', async function (e) {
       e.preventDefault();
+      const form = this;
       const submitBtn = document.getElementById('apply-submit');
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
       submitBtn.textContent = 'TRANSMITTING...';
 
-      setTimeout(() => {
+      const payload = {
+        name: document.getElementById('apply-ign').value,
+        uid: document.getElementById('apply-uid').value,
+        discord: document.getElementById('apply-discord').value,
+        device: document.getElementById('apply-device').value
+      };
+
+      const turnstileToken = (typeof turnstile !== 'undefined') ? turnstile.getResponse() : null;
+      if (turnstileToken) payload.token = turnstileToken;
+
+      try {
+        const res = await fetch(APPLY_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Worker responded with status ' + res.status);
+
+        showToast('Application received. Recruiters will DM you within 48h.', 'ok');
+        if (typeof turnstile !== 'undefined') turnstile.reset();
+        form.reset();
+        closeModal();
+      } catch (err) {
+        showToast('Could not submit — check your connection and try again.', 'danger');
+      } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
-        showToast('Application received. Recruiters will DM you within 48h.', 'ok');
-        this.reset();
-        closeModal();
-      }, 900);
+      }
     });
 
     /* ---------- Nav active-section highlight ---------- */
