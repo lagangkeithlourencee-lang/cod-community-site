@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bisaya COD Community // Squad Terminal</title>
-  
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
     :root {
       --bg: #07090e;
@@ -23,7 +23,10 @@
       --gold-glow: rgba(245, 158, 11, 0.15);
       --ok: #10b981;
       --danger: #ef4444;
+      --cyan: #22d3ee;
     }
+
+    * { -webkit-tap-highlight-color: transparent; }
 
     body {
       background: radial-gradient(circle at 50% 0%, var(--gold-glow) 0%, transparent 60%), var(--bg);
@@ -51,11 +54,83 @@
     .bracket::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
     .bracket::after { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
     .bracket:hover::before, .bracket:hover::after { width: 14px; height: 14px; }
+
+    /* Nav active state */
+    .nav-link { position: relative; }
+    .nav-link.active { color: var(--gold); }
+    .nav-link.active::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--gold);
+    }
+
+    /* Modal */
+    #modal-backdrop {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(3, 5, 9, 0.85); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    }
+    #modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    #modal-panel {
+      transform: translateY(16px) scale(0.98); opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+    #modal-backdrop.open #modal-panel { transform: translateY(0) scale(1); opacity: 1; }
+
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: scan 3s linear infinite; opacity: 0.7;
+    }
+    @keyframes scan {
+      0% { top: 0; } 100% { top: 100%; }
+    }
+
+    input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 2px solid var(--gold); outline-offset: 2px;
+    }
+
+    /* Toasts */
+    #toast-stack {
+      position: fixed; bottom: 1rem; right: 1rem; z-index: 60;
+      display: flex; flex-direction: column; gap: 0.5rem; max-width: 320px;
+    }
+    .toast {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+      background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--gold);
+      padding: 0.75rem 1rem; color: var(--bone);
+      animation: toast-in 0.25s ease, toast-out 0.25s ease 2.75s forwards;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .toast.ok { border-left-color: var(--ok); }
+    .toast.danger { border-left-color: var(--danger); }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scan-line, .animate-ping, .animate-pulse { animation: none !important; }
+      #modal-panel, #modal-backdrop { transition: none !important; }
+    }
+
+    /* Mobile nav */
+    #mobile-nav { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    #mobile-nav.open { max-height: 400px; }
   </style>
 </head>
 <body class="min-h-screen relative flex flex-col justify-between overflow-x-hidden">
 
   <div class="hud-overlay"></div>
+  <div id="toast-stack" aria-live="polite"></div>
+
+  <!-- Server Status Ticker -->
+  <div class="relative z-20 bg-black/60 border-b border-[var(--line)] overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 py-1.5 flex items-center gap-6 font-mono text-[10px] text-[var(--muted)] whitespace-nowrap overflow-x-auto">
+      <span class="flex items-center gap-1.5 shrink-0"><span class="h-1.5 w-1.5 rounded-full bg-[var(--ok)]"></span>VISAYAS SERVER: ONLINE</span>
+      <span class="shrink-0">PING: 24ms</span>
+      <span class="shrink-0" id="ticker-members">MEMBERS ONLINE: 187</span>
+      <span class="shrink-0">SEASON: RANKED S4</span>
+      <span class="shrink-0 text-[var(--gold)]">CLAN WARS RESET IN <span id="countdown">--:--:--</span></span>
+    </div>
+  </div>
 
   <!-- Header / Navigation -->
   <header class="relative z-20 border-b border-[var(--line)] bg-[var(--bg)]/90 backdrop-blur sticky top-0">
@@ -65,54 +140,108 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-3 w-3 bg-[var(--gold)]"></span>
         </span>
-        <h1 class="font-display text-2xl tracking-wider text-[var(--bone)]">BISAYA COD COMMUNITY</h1>
+        <div>
+          <h1 class="font-display text-2xl tracking-wider text-[var(--bone)] leading-none">BISAYA COD COMMUNITY</h1>
+          <p class="font-mono text-[10px] text-[var(--muted)] mt-0.5">CALL OF DUTY: MOBILE // SQUAD TERMINAL</p>
+        </div>
       </div>
-      <nav class="flex flex-wrap gap-4 font-mono text-xs text-[var(--muted)]">
-        <a href="#scrims" class="hover:text-[var(--gold)] transition-colors">/SCRIMS_N_LOBBIES</a>
-        <a href="#brackets" class="hover:text-[var(--gold)] transition-colors">/BRACKETS</a>
-        <a href="#leaderboard" class="hover:text-[var(--gold)] transition-colors">/LEADERBOARD</a>
-        <a href="#loadouts" class="hover:text-[var(--gold)] transition-colors">/META_GUNSMITH</a>
-        <button onclick="toggleApplication()" class="hover:text-[var(--gold)] transition-colors font-mono text-xs text-[var(--muted)]">
-          /APPLY_CLAN
-        </button>
+
+      <nav class="hidden md:flex flex-wrap gap-6 font-mono text-xs text-[var(--muted)]">
+        <a href="#scrims" class="nav-link hover:text-[var(--gold)] transition-colors">/SCRIMS_N_LOBBIES</a>
+        <a href="#brackets" class="nav-link hover:text-[var(--gold)] transition-colors">/BRACKETS</a>
+        <a href="#leaderboard" class="nav-link hover:text-[var(--gold)] transition-colors">/LEADERBOARD</a>
+        <a href="#loadouts" class="nav-link hover:text-[var(--gold)] transition-colors">/META_GUNSMITH</a>
       </nav>
+
+      <div class="hidden md:flex items-center gap-3">
+        <button onclick="openModal()" class="px-4 py-2 bg-[var(--gold)] text-black font-display text-xs font-bold hover:bg-amber-400 transition-colors">
+          APPLY TO CLAN
+        </button>
+      </div>
+
+      <button id="burger" onclick="toggleMobileNav()" aria-label="Toggle navigation menu" aria-expanded="false" class="md:hidden text-[var(--bone)] p-2 border border-[var(--line)]">
+        <svg id="burger-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-nav" class="md:hidden border-t border-[var(--line)]">
+      <div class="px-6 py-4 flex flex-col gap-4 font-mono text-xs text-[var(--muted)]">
+        <a href="#scrims" onclick="closeMobileNav()" class="hover:text-[var(--gold)]">/SCRIMS_N_LOBBIES</a>
+        <a href="#brackets" onclick="closeMobileNav()" class="hover:text-[var(--gold)]">/BRACKETS</a>
+        <a href="#leaderboard" onclick="closeMobileNav()" class="hover:text-[var(--gold)]">/LEADERBOARD</a>
+        <a href="#loadouts" onclick="closeMobileNav()" class="hover:text-[var(--gold)]">/META_GUNSMITH</a>
+        <button onclick="openModal(); closeMobileNav();" class="px-4 py-2 bg-[var(--gold)] text-black font-display text-xs font-bold w-fit">
+          APPLY TO CLAN
+        </button>
+      </div>
     </div>
   </header>
 
   <!-- Main Grid Content -->
-  <main class="relative z-10 max-w-7xl mx-auto px-6 py-8 space-y-10">
-    
+  <main class="relative z-10 max-w-7xl mx-auto px-6 py-8 space-y-10 w-full">
+
     <!-- Announcement Banner -->
     <section class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex items-center justify-between flex-wrap gap-4">
       <div class="flex items-center gap-3">
         <span class="px-2 py-0.5 bg-[var(--gold)] text-black font-mono font-bold text-xs uppercase">ANNOUNCEMENT</span>
-        <p class="text-xs font-mono text-[var(--bone)]">Clan Tournament Registrations are now OPEN. Secure your roster spot below.</p>
+        <p class="text-xs font-mono text-[var(--bone)]">Clan Tournament registrations are now OPEN. Secure your roster spot below.</p>
       </div>
-      <button onclick="toggleApplication()" class="px-3 py-1 bg-[var(--gold)] text-black font-display text-xs hover:bg-amber-400 transition-colors">
+      <button onclick="openModal()" class="px-3 py-1 bg-[var(--gold)] text-black font-display text-xs hover:bg-amber-400 transition-colors shrink-0">
         REGISTER TEAM
       </button>
     </section>
 
     <!-- Scrims & Tournament Brackets Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      
+
       <!-- Scrims Feed -->
-      <section id="scrims" class="space-y-4">
+      <section id="scrims" class="space-y-4 scroll-mt-32">
         <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
           <h3 class="font-display text-xl text-[var(--bone)]">SCRIMS & CUSTOM ROOMS</h3>
           <span class="text-xs font-mono text-[var(--ok)] animate-pulse">● LIVE LOBBIES</span>
         </div>
-        
+
         <div id="scrims-container" class="space-y-3">
-          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center hover:bg-[var(--panel-hover)] transition-all">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center gap-4 hover:bg-[var(--panel-hover)] transition-all" data-slots="10" data-filled="7">
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2 py-0.5 text-[10px] font-mono bg-emerald-500/10 text-[var(--ok)] border border-emerald-500/20">SnD 5v5</span>
                 <span class="font-display text-lg text-[var(--bone)]">Community Custom Lobby</span>
               </div>
               <p class="text-xs font-mono text-[var(--muted)]">MAP POOL: Raid, Summit, Standoff</p>
+              <p class="text-xs font-mono text-[var(--gold)] slots-label">7 / 10 SLOTS FILLED</p>
             </div>
-            <button onclick="rsvpLobby('Lobby 01')" class="px-3 py-2 border border-[var(--gold)] text-[var(--gold)] font-display text-xs hover:bg-[var(--gold)] hover:text-black transition-colors">
+            <button onclick="rsvpLobby(this, 'Community Custom Lobby')" class="rsvp-btn px-3 py-2 border border-[var(--gold)] text-[var(--gold)] font-display text-xs hover:bg-[var(--gold)] hover:text-black transition-colors shrink-0">
+              JOIN LOBBY
+            </button>
+          </div>
+
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center gap-4 hover:bg-[var(--panel-hover)] transition-all" data-slots="8" data-filled="8">
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2 py-0.5 text-[10px] font-mono bg-cyan-500/10 text-[var(--cyan)] border border-cyan-500/20">Ranked 4v4</span>
+                <span class="font-display text-lg text-[var(--bone)]">Legendary Push Scrim</span>
+              </div>
+              <p class="text-xs font-mono text-[var(--muted)]">MAP POOL: Nuketown, Crash</p>
+              <p class="text-xs font-mono text-[var(--danger)] slots-label">8 / 8 SLOTS FILLED</p>
+            </div>
+            <button disabled class="px-3 py-2 border border-[var(--line)] text-[var(--muted)] font-display text-xs cursor-not-allowed shrink-0">
+              LOBBY FULL
+            </button>
+          </div>
+
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket flex justify-between items-center gap-4 hover:bg-[var(--panel-hover)] transition-all" data-slots="10" data-filled="3">
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2 py-0.5 text-[10px] font-mono bg-amber-500/10 text-[var(--gold)] border border-amber-500/20">Multi-team</span>
+                <span class="font-display text-lg text-[var(--bone)]">Sundayscrim Warm-up</span>
+              </div>
+              <p class="text-xs font-mono text-[var(--muted)]">MAP POOL: All maps, host's choice</p>
+              <p class="text-xs font-mono text-[var(--gold)] slots-label">3 / 10 SLOTS FILLED</p>
+            </div>
+            <button onclick="rsvpLobby(this, 'Sundayscrim Warm-up')" class="rsvp-btn px-3 py-2 border border-[var(--gold)] text-[var(--gold)] font-display text-xs hover:bg-[var(--gold)] hover:text-black transition-colors shrink-0">
               JOIN LOBBY
             </button>
           </div>
@@ -120,12 +249,12 @@
       </section>
 
       <!-- Tournament Brackets -->
-      <section id="brackets" class="space-y-4">
+      <section id="brackets" class="space-y-4 scroll-mt-32">
         <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
           <h3 class="font-display text-xl text-[var(--bone)]">TOURNAMENT BRACKET</h3>
           <span class="text-xs font-mono text-[var(--muted)]">QUARTER-FINALS</span>
         </div>
-        
+
         <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-3 font-mono text-xs">
           <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
             <span class="font-bold text-[var(--bone)]">Squad Alpha</span>
@@ -137,6 +266,15 @@
           </div>
           <div class="my-2 border-t border-dashed border-[var(--line)]"></div>
           <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
+            <span class="font-bold text-[var(--bone)]">Squad Kilat</span>
+            <span class="text-[var(--ok)] font-bold">2 (WIN)</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)] opacity-60">
+            <span>Squad Bantay</span>
+            <span>1</span>
+          </div>
+          <div class="my-2 border-t border-dashed border-[var(--line)]"></div>
+          <div class="flex justify-between items-center p-2 bg-[var(--bg)] border border-[var(--line)]">
             <span class="text-[var(--bone)]">Squad Charlie</span>
             <span class="text-[var(--gold)]">UPCOMING</span>
           </div>
@@ -145,17 +283,24 @@
             <span class="text-[var(--gold)]">UPCOMING</span>
           </div>
         </div>
+
+        <div class="flex items-center gap-2 font-mono text-[10px] text-[var(--muted)]">
+          <span class="h-1.5 w-1.5 rounded-full bg-[var(--gold)] animate-pulse"></span>
+          NEXT MATCH: Squad Charlie vs Squad Delta — starts in <span id="match-countdown" class="text-[var(--gold)]">--:--</span>
+        </div>
       </section>
     </div>
 
     <!-- Leaderboard & Loadouts Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
+
       <!-- Leaderboard -->
-      <section id="leaderboard" class="space-y-4">
-        <div class="border-b border-[var(--line)] pb-2">
+      <section id="leaderboard" class="space-y-4 scroll-mt-32">
+        <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center gap-3">
           <h3 class="font-display text-xl text-[var(--bone)]">PLAYER LEADERBOARD</h3>
         </div>
+        <input id="leaderboard-search" type="text" oninput="filterLeaderboard()" placeholder="SEARCH IGN..."
+          class="w-full bg-[var(--panel)] border border-[var(--line)] p-2 text-xs font-mono text-[var(--bone)] placeholder:text-[var(--muted)] focus:border-[var(--gold)] outline-none">
         <div class="bg-[var(--panel)] border border-[var(--line)] bracket overflow-x-auto">
           <table class="w-full text-left font-mono text-xs">
             <thead class="border-b border-[var(--line)] text-[var(--muted)]">
@@ -166,120 +311,340 @@
                 <th class="p-3">ROLE</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-[var(--line)]">
-              <tr>
+            <tbody id="leaderboard-body" class="divide-y divide-[var(--line)]">
+              <tr data-ign="slayer_apex">
                 <td class="p-3 text-[var(--gold)]">01</td>
                 <td class="p-3 font-bold text-[var(--bone)]">Slayer_Apex</td>
                 <td class="p-3 text-[var(--ok)]">3.12</td>
                 <td class="p-3 text-[var(--muted)]">Slayer</td>
               </tr>
-              <tr>
+              <tr data-ign="anchor_pro">
                 <td class="p-3 text-[var(--gold)]">02</td>
                 <td class="p-3 font-bold text-[var(--bone)]">Anchor_Pro</td>
                 <td class="p-3 text-[var(--ok)]">2.85</td>
                 <td class="p-3 text-[var(--muted)]">Anchor</td>
               </tr>
+              <tr data-ign="bantay_gwapo">
+                <td class="p-3 text-[var(--gold)]">03</td>
+                <td class="p-3 font-bold text-[var(--bone)]">Bantay_Gwapo</td>
+                <td class="p-3 text-[var(--ok)]">2.41</td>
+                <td class="p-3 text-[var(--muted)]">Objective</td>
+              </tr>
+              <tr data-ign="kalog_sniper">
+                <td class="p-3 text-[var(--gold)]">04</td>
+                <td class="p-3 font-bold text-[var(--bone)]">Kalog_Sniper</td>
+                <td class="p-3 text-[var(--ok)]">2.20</td>
+                <td class="p-3 text-[var(--muted)]">Anchor</td>
+              </tr>
             </tbody>
           </table>
+          <p id="leaderboard-empty" class="hidden p-4 text-center font-mono text-xs text-[var(--muted)]">NO OPERATOR FOUND WITH THAT IGN.</p>
         </div>
       </section>
 
       <!-- Meta Gunsmith Loadouts -->
-      <section id="loadouts" class="lg:col-span-2 space-y-4">
+      <section id="loadouts" class="lg:col-span-2 space-y-4 scroll-mt-32">
         <div class="border-b border-[var(--line)] pb-2 flex justify-between items-center">
           <h3 class="font-display text-xl text-[var(--bone)]">COMMUNITY META GUNSMITH</h3>
           <span class="text-xs font-mono text-[var(--gold)]">TOP VOTED</span>
         </div>
         <div id="loadouts-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
           <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-2 hover:bg-[var(--panel-hover)] transition-all">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start gap-2">
               <h4 class="font-display text-lg text-[var(--gold)]">BP50 — Aggressive Build</h4>
-              <button onclick="copyCode('BP50-88329')" class="text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)]">COPY CODE</button>
+              <button onclick="copyCode(this, 'BP50-88329')" class="copy-btn shrink-0 text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)] transition-colors">COPY CODE</button>
             </div>
             <p class="text-xs font-mono text-[var(--muted)]">SHARE CODE: BP50-88329</p>
             <p class="text-xs text-[var(--bone)]">Monolithic Suppressor | No Stock | OWC Laser | 60 Rnd Mag</p>
             <div class="pt-2 flex justify-between items-center border-t border-[var(--line)] text-xs font-mono">
               <span class="text-[var(--ok)]">▲ Meta Verified</span>
-              <button onclick="upvoteLoadout(this)" class="hover:text-[var(--gold)] font-bold">▲ <span class="votes">142</span> Upvotes</button>
+              <button onclick="upvoteLoadout(this)" class="vote-btn hover:text-[var(--gold)] font-bold transition-colors">▲ <span class="votes">142</span> Upvotes</button>
             </div>
           </div>
+
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-2 hover:bg-[var(--panel-hover)] transition-all">
+            <div class="flex justify-between items-start gap-2">
+              <h4 class="font-display text-lg text-[var(--gold)]">Man-O-War — Anchor Build</h4>
+              <button onclick="copyCode(this, 'MOW-41207')" class="copy-btn shrink-0 text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)] transition-colors">COPY CODE</button>
+            </div>
+            <p class="text-xs font-mono text-[var(--muted)]">SHARE CODE: MOW-41207</p>
+            <p class="text-xs text-[var(--bone)]">OWC Marksman | Fabric Grip | 6.7" CQB Pro | Tac Laser</p>
+            <div class="pt-2 flex justify-between items-center border-t border-[var(--line)] text-xs font-mono">
+              <span class="text-[var(--ok)]">▲ Meta Verified</span>
+              <button onclick="upvoteLoadout(this)" class="vote-btn hover:text-[var(--gold)] font-bold transition-colors">▲ <span class="votes">98</span> Upvotes</button>
+            </div>
+          </div>
+
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-2 hover:bg-[var(--panel-hover)] transition-all">
+            <div class="flex justify-between items-start gap-2">
+              <h4 class="font-display text-lg text-[var(--gold)]">Fennec 45 — Rush Build</h4>
+              <button onclick="copyCode(this, 'FEN-90015')" class="copy-btn shrink-0 text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)] transition-colors">COPY CODE</button>
+            </div>
+            <p class="text-xs font-mono text-[var(--muted)]">SHARE CODE: FEN-90015</p>
+            <p class="text-xs text-[var(--bone)]">Speed Tape | Steady Grip | 45 Rnd Fast Mag | No Stock</p>
+            <div class="pt-2 flex justify-between items-center border-t border-[var(--line)] text-xs font-mono">
+              <span class="text-[var(--muted)]">△ Community Pick</span>
+              <button onclick="upvoteLoadout(this)" class="vote-btn hover:text-[var(--gold)] font-bold transition-colors">▲ <span class="votes">61</span> Upvotes</button>
+            </div>
+          </div>
+
+          <div class="p-4 bg-[var(--panel)] border border-[var(--line)] bracket space-y-2 hover:bg-[var(--panel-hover)] transition-all">
+            <div class="flex justify-between items-start gap-2">
+              <h4 class="font-display text-lg text-[var(--gold)]">DL Q33 — One-Shot Build</h4>
+              <button onclick="copyCode(this, 'DLQ-77341')" class="copy-btn shrink-0 text-[10px] font-mono px-2 py-0.5 border border-[var(--line)] hover:border-[var(--gold)] transition-colors">COPY CODE</button>
+            </div>
+            <p class="text-xs font-mono text-[var(--muted)]">SHARE CODE: DLQ-77341</p>
+            <p class="text-xs text-[var(--bone)]">OWC Marksman | 26.8" Sniper Barrel | Steady Aim Sniper Set</p>
+            <div class="pt-2 flex justify-between items-center border-t border-[var(--line)] text-xs font-mono">
+              <span class="text-[var(--muted)]">△ Community Pick</span>
+              <button onclick="upvoteLoadout(this)" class="vote-btn hover:text-[var(--gold)] font-bold transition-colors">▲ <span class="votes">54</span> Upvotes</button>
+            </div>
+          </div>
+
         </div>
       </section>
     </div>
 
-    <!-- Clan Application Section (Hidden by default) -->
-    <section id="join" class="space-y-4 max-w-xl mx-auto hidden">
-      <div class="border-b border-[var(--line)] pb-2 text-center flex justify-between items-center">
+  </main>
+
+  <!-- Clan Application Modal -->
+  <div id="modal-backdrop" role="presentation" onclick="if(event.target === this) closeModal()">
+    <div id="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" class="relative w-full max-w-xl bg-[var(--panel)] border border-[var(--line)] bracket overflow-hidden">
+      <div class="scan-line"></div>
+
+      <div class="flex justify-between items-start p-6 border-b border-[var(--line)]">
         <div>
-          <h3 class="font-display text-2xl text-[var(--bone)]">CLAN APPLICATION FORM</h3>
-          <p class="text-xs font-mono text-[var(--muted)]">CONNECTED TO CLOUDFLARE WORKERS & D1 DATABASE</p>
+          <p class="font-mono text-[10px] text-[var(--gold)] mb-1">// DEPLOYMENT FORM</p>
+          <h3 id="modal-title" class="font-display text-2xl text-[var(--bone)]">CLAN APPLICATION</h3>
+          <p class="text-xs font-mono text-[var(--muted)] mt-1">CONNECTED TO CLOUDFLARE WORKERS & D1 DATABASE</p>
         </div>
-        <button type="button" onclick="toggleApplication()" class="text-xs font-mono text-[var(--muted)] hover:text-[var(--danger)]">
-          ✕ CLOSE
+        <button type="button" onclick="closeModal()" aria-label="Close application form" class="text-[var(--muted)] hover:text-[var(--danger)] transition-colors p-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
-      
-      <div class="p-6 bg-[var(--panel)] border border-[var(--line)] bracket">
-        <form action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
+
+      <div class="p-6 max-h-[70vh] overflow-y-auto">
+        <form id="apply-form" action="https://your-worker.your-subdomain.workers.dev/api/apply" method="POST" class="space-y-4 text-sm">
           <div>
-            <label class="block font-mono text-xs text-[var(--muted)] mb-1">IN-GAME NAME (IGN)</label>
-            <input type="text" name="username" placeholder="e.g. Operator_01" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
-          </div>
-          
-          <div>
-            <label class="block font-mono text-xs text-[var(--muted)] mb-1">REGION / CITY</label>
-            <input type="text" name="location" placeholder="e.g. Philippines" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+            <label for="apply-ign" class="block font-mono text-xs text-[var(--muted)] mb-1">IN-GAME NAME (IGN)</label>
+            <input id="apply-ign" type="text" name="username" placeholder="e.g. Operator_01" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
           </div>
 
           <div>
-            <label class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY ROLE</label>
-            <select name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+            <label for="apply-location" class="block font-mono text-xs text-[var(--muted)] mb-1">REGION / CITY</label>
+            <input id="apply-location" type="text" name="location" placeholder="e.g. Cebu, Philippines" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+          </div>
+
+          <div>
+            <label for="apply-role" class="block font-mono text-xs text-[var(--muted)] mb-1">PRIMARY ROLE</label>
+            <select id="apply-role" name="role" class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
               <option value="assault">Assault / Slayer</option>
               <option value="sniper">Sniper / Anchor</option>
               <option value="support">Objective Player</option>
             </select>
           </div>
 
+          <div>
+            <label for="apply-uid" class="block font-mono text-xs text-[var(--muted)] mb-1">COD MOBILE UID</label>
+            <input id="apply-uid" type="text" name="uid" placeholder="e.g. 123456789012" pattern="[0-9]{6,15}" required class="w-full bg-[var(--bg)] border border-[var(--line)] p-2.5 text-[var(--bone)] focus:border-[var(--gold)] outline-none font-mono">
+          </div>
+
           <!-- Cloudflare Turnstile Verification -->
           <div class="cf-turnstile my-4 flex justify-center" data-sitekey="YOUR_TURNSTILE_SITE_KEY"></div>
 
-          <button type="submit" class="w-full py-3 bg-[var(--gold)] text-black font-display font-bold hover:bg-amber-400 transition-colors">
+          <button id="apply-submit" type="submit" class="w-full py-3 bg-[var(--gold)] text-black font-display font-bold hover:bg-amber-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
             SUBMIT APPLICATION
           </button>
+          <p class="text-[10px] font-mono text-[var(--muted)] text-center">Wire this form's action to your live Worker endpoint before launch — submissions currently simulate a response.</p>
         </form>
       </div>
-    </section>
-
-  </main>
+    </div>
+  </div>
 
   <!-- Interactive JavaScript Functions -->
   <script>
-    function toggleApplication() {
-      const appSection = document.getElementById('join');
-      if (appSection) {
-        appSection.classList.toggle('hidden');
-        if (!appSection.classList.contains('hidden')) {
-          appSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
+    /* ---------- Toasts ---------- */
+    function showToast(message, type = 'default') {
+      const stack = document.getElementById('toast-stack');
+      const toast = document.createElement('div');
+      toast.className = 'toast font-mono' + (type === 'ok' ? ' ok' : type === 'danger' ? ' danger' : '');
+      toast.textContent = message;
+      stack.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
     }
 
-    function copyCode(code) {
-      navigator.clipboard.writeText(code);
-      alert('Gunsmith Code Copied to Clipboard: ' + code);
+    /* ---------- Modal ---------- */
+    let lastFocusedEl = null;
+
+    function openModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      lastFocusedEl = document.activeElement;
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('apply-ign').focus(), 100);
+      document.addEventListener('keydown', handleModalKeydown);
     }
 
+    function closeModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleModalKeydown);
+      if (lastFocusedEl) lastFocusedEl.focus();
+    }
+
+    function handleModalKeydown(e) {
+      if (e.key === 'Escape') closeModal();
+    }
+
+    /* ---------- Mobile nav ---------- */
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobile-nav');
+      const isOpen = nav.classList.toggle('open');
+      document.getElementById('burger').setAttribute('aria-expanded', isOpen);
+    }
+    function closeMobileNav() {
+      document.getElementById('mobile-nav').classList.remove('open');
+      document.getElementById('burger').setAttribute('aria-expanded', 'false');
+    }
+
+    /* ---------- Copy gunsmith code ---------- */
+    function copyCode(btn, code) {
+      const original = btn.textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('text-[var(--ok)]', 'border-[var(--ok)]');
+        showToast('Gunsmith code copied: ' + code, 'ok');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('text-[var(--ok)]', 'border-[var(--ok)]');
+        }, 1800);
+      }).catch(() => {
+        showToast('Could not copy — copy manually: ' + code, 'danger');
+      });
+    }
+
+    /* ---------- Upvote loadouts (toggleable, one vote per session) ---------- */
     function upvoteLoadout(btn) {
       const voteSpan = btn.querySelector('.votes');
-      if (voteSpan) {
-        voteSpan.textContent = parseInt(voteSpan.textContent) + 1;
-        btn.classList.add('text-[var(--gold)]');
+      const current = parseInt(voteSpan.textContent, 10);
+      const voted = btn.classList.contains('text-[var(--gold)]');
+      voteSpan.textContent = voted ? current - 1 : current + 1;
+      btn.classList.toggle('text-[var(--gold)]');
+    }
+
+    /* ---------- RSVP to scrim lobbies ---------- */
+    function rsvpLobby(btn, lobbyName) {
+      const card = btn.closest('[data-slots]');
+      const slots = parseInt(card.dataset.slots, 10);
+      let filled = parseInt(card.dataset.filled, 10);
+      const label = card.querySelector('.slots-label');
+
+      if (btn.dataset.joined === 'true') {
+        filled = Math.max(0, filled - 1);
+        btn.dataset.joined = 'false';
+        btn.textContent = 'JOIN LOBBY';
+        btn.classList.remove('bg-[var(--gold)]', 'text-black');
+        showToast('Left ' + lobbyName + '.', 'default');
+      } else {
+        filled = Math.min(slots, filled + 1);
+        btn.dataset.joined = 'true';
+        btn.textContent = 'JOINED ✓';
+        btn.classList.add('bg-[var(--gold)]', 'text-black');
+        showToast('RSVPed for ' + lobbyName + '. Check your DMs for lobby code.', 'ok');
+      }
+
+      card.dataset.filled = filled;
+      label.textContent = filled + ' / ' + slots + ' SLOTS FILLED';
+      label.classList.toggle('text-[var(--danger)]', filled >= slots);
+      label.classList.toggle('text-[var(--gold)]', filled < slots);
+
+      if (filled >= slots && btn.dataset.joined !== 'true') {
+        btn.disabled = true;
+        btn.textContent = 'LOBBY FULL';
       }
     }
 
-    function rsvpLobby(lobbyName) {
-      alert('Successfully RSVPed for ' + lobbyName + '. Lobby details confirmed.');
+    /* ---------- Leaderboard search ---------- */
+    function filterLeaderboard() {
+      const query = document.getElementById('leaderboard-search').value.trim().toLowerCase();
+      const rows = document.querySelectorAll('#leaderboard-body tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const match = row.dataset.ign.includes(query);
+        row.classList.toggle('hidden', !match);
+        if (match) visibleCount++;
+      });
+      document.getElementById('leaderboard-empty').classList.toggle('hidden', visibleCount !== 0);
     }
+
+    /* ---------- Apply form submit (simulated) ---------- */
+    document.getElementById('apply-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('apply-submit');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'TRANSMITTING...';
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        showToast('Application received. Recruiters will DM you within 48h.', 'ok');
+        this.reset();
+        closeModal();
+      }, 900);
+    });
+
+    /* ---------- Nav active-section highlight ---------- */
+    const sections = ['scrims', 'brackets', 'leaderboard', 'loadouts'].map(id => document.getElementById(id));
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+
+    sections.forEach(section => { if (section) observer.observe(section); });
+
+    /* ---------- Clan Wars reset countdown ---------- */
+    function updateCountdown() {
+      const now = new Date();
+      const nextReset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + ((7 - now.getUTCDay()) % 7 || 7), 0, 0, 0));
+      const diff = nextReset - now;
+      const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+      document.getElementById('countdown').textContent = h + ':' + m + ':' + s;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    /* ---------- Next match countdown (demo: 45 minutes out) ---------- */
+    const matchTarget = Date.now() + 45 * 60 * 1000;
+    function updateMatchCountdown() {
+      const diff = Math.max(0, matchTarget - Date.now());
+      const m = String(Math.floor(diff / 60000)).padStart(2, '0');
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+      document.getElementById('match-countdown').textContent = m + ':' + s;
+    }
+    updateMatchCountdown();
+    setInterval(updateMatchCountdown, 1000);
+
+    /* ---------- Ambient online-members ticker ---------- */
+    setInterval(() => {
+      const el = document.getElementById('ticker-members');
+      const base = 187;
+      const variance = Math.floor(Math.random() * 15) - 7;
+      el.textContent = 'MEMBERS ONLINE: ' + (base + variance);
+    }, 5000);
   </script>
 
   <footer class="relative z-10 border-t border-[var(--line)] py-6 text-center font-mono text-xs text-[var(--muted)]">
