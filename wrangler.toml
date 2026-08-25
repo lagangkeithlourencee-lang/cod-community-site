@@ -11,7 +11,7 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "bisaya-codm"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "8f4f3a42-c564-4a46-a98d-85b543d6c414"
 
 # ---------------------------------------------------------------
 # Secrets (do NOT put these here — set via CLI or dashboard):
