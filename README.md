@@ -4,6 +4,7 @@ This site now uses a compiled Tailwind stylesheet (`output.css`) instead of the
 `cdn.tailwindcss.com` script, so there's no runtime compiler warning and no
 extra JS download on page load.
 
+
 ## Files
 - `index.html`   — the site
 - `input.css`    — Tailwind's entry point (`@tailwind base/components/utilities`)
