@@ -12,94 +12,220 @@
     }
     * { box-sizing: border-box; }
     body { background: var(--bg); color: var(--bone); font-family: 'IBM Plex Mono', monospace; margin: 0; padding: 2rem 1rem; }
-    .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
-    .wrap { max-width: 900px; margin: 0 auto; }
     h1 { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; font-size: 1.5rem; margin-bottom: 0.25rem; }
-    .sub { color: var(--muted); font-size: 0.75rem; margin-bottom: 2rem; }
+    .sub { color: var(--muted); font-size: 0.75rem; margin-bottom: 1.5rem; }
+    .wrap { max-width: 1000px; margin: 0 auto; }
+
     #login-box { background: var(--panel); border: 1px solid var(--line); padding: 2rem; max-width: 360px; margin: 4rem auto; text-align: center; }
-    #login-box input { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--bone); padding: 0.6rem; margin: 1rem 0; font-family: inherit; }
-    #login-box button, .action-btn { background: var(--gold); color: black; border: none; padding: 0.6rem 1rem; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; }
-    #login-box button:hover, .action-btn:hover { opacity: 0.85; }
-    #login-error { color: var(--danger); font-size: 0.75rem; margin-top: 0.5rem; min-height: 1em; }
+    #login-box input { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--bone); padding: 0.6rem; margin: 0.5rem 0; font-family: inherit; }
+    #login-box button { background: var(--gold); color: black; border: none; padding: 0.6rem 1rem; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; width: 100%; margin-top: 0.75rem; }
+    #login-error { color: var(--danger); font-size: 0.75rem; margin-top: 0.75rem; min-height: 1em; }
+
     #app-view { display: none; }
-    .app-card { background: var(--panel); border: 1px solid var(--line); padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .app-info div { font-size: 0.8rem; margin-bottom: 0.15rem; }
-    .app-info .ign { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--gold); }
-    .app-info .muted { color: var(--muted); }
-    .status-pill { font-size: 0.65rem; padding: 0.15rem 0.5rem; border: 1px solid var(--line); text-transform: uppercase; }
+    .topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem; }
+    .who { font-size: 0.75rem; color: var(--muted); }
+    .who span { color: var(--gold); }
+    .logout-btn { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 0.4rem 0.8rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; cursor: pointer; }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+    .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .tab-btn { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 0.4rem 0.8rem; font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.05em; cursor: pointer; }
+    .tab-btn.active { color: var(--gold); border-color: var(--gold); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .card { background: var(--panel); border: 1px solid var(--line); padding: 1rem; margin-bottom: 0.75rem; }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .row .info { font-size: 0.8rem; }
+    .row .info .title { font-family: 'Oswald', sans-serif; font-size: 1rem; color: var(--gold); }
+    .row .info .muted { color: var(--muted); font-size: 0.72rem; }
+    .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .btn { border: none; padding: 0.4rem 0.7rem; font-family: 'Oswald', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; }
+    .btn-ok { background: var(--ok); color: black; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-gold { background: var(--gold); color: black; }
+    .btn-outline { background: transparent; border: 1px solid var(--line); color: var(--bone); }
+    .status-pill { font-size: 0.62rem; padding: 0.15rem 0.5rem; border: 1px solid var(--line); text-transform: uppercase; }
     .status-pending { color: var(--gold); border-color: var(--gold); }
-    .status-accepted { color: var(--ok); border-color: var(--ok); }
-    .status-rejected { color: var(--danger); border-color: var(--danger); }
-    .actions { display: flex; gap: 0.5rem; }
-    .btn-accept { background: var(--ok); color: black; }
-    .btn-reject { background: var(--danger); color: white; }
+    .status-accepted, .status-1 { color: var(--ok); border-color: var(--ok); }
+    .status-rejected, .status-0 { color: var(--danger); border-color: var(--danger); }
     .empty { color: var(--muted); text-align: center; padding: 2rem; }
+
+    .add-form { background: var(--panel); border: 1px dashed var(--line); padding: 1rem; margin-bottom: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem; align-items: end; }
+    .add-form label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .add-form input, .add-form select { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--bone); padding: 0.45rem; font-family: inherit; font-size: 0.78rem; }
+    .add-form .full { grid-column: 1 / -1; }
+    .add-form button { grid-column: 1 / -1; }
+
+    .log-row { font-size: 0.73rem; border-bottom: 1px solid var(--line); padding: 0.5rem 0; color: var(--muted); }
+    .log-row span { color: var(--bone); }
+
+    .editable { background: transparent; border: none; border-bottom: 1px dashed var(--line); color: var(--bone); font-family: inherit; font-size: inherit; width: 70px; padding: 0.1rem; }
+    .editable:focus { outline: none; border-bottom-color: var(--gold); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div id="login-box">
       <h1>ADMIN ACCESS</h1>
-      <p class="sub">Enter your admin key to continue</p>
-      <input id="admin-key-input" type="password" placeholder="Admin key" autocomplete="off">
-      <button onclick="login()">ENTER</button>
+      <p class="sub">Sign in to manage the site</p>
+      <input id="username-input" type="text" placeholder="Username" autocomplete="username">
+      <input id="password-input" type="password" placeholder="Password" autocomplete="current-password">
+      <button onclick="login()">SIGN IN</button>
       <p id="login-error"></p>
     </div>
 
     <div id="app-view">
-      <h1>CLAN APPLICATIONS</h1>
-      <p class="sub">Review and process incoming applications</p>
-      <div id="applications-container"><p class="empty">Loading...</p></div>
+      <div class="topbar">
+        <div>
+          <h1>ADMIN PANEL</h1>
+          <p class="sub">Manage applications, announcements, leaderboard, scrims &amp; loadouts</p>
+        </div>
+        <div style="text-align:right;">
+          <div class="who">Signed in as <span id="who-username"></span></div>
+          <button class="logout-btn" onclick="logout()">LOG OUT</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="apps" onclick="switchTab('apps')">APPLICATIONS</button>
+        <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements')">ANNOUNCEMENTS</button>
+        <button class="tab-btn" data-tab="players" onclick="switchTab('players')">LEADERBOARD</button>
+        <button class="tab-btn" data-tab="scrims" onclick="switchTab('scrims')">SCRIMS</button>
+        <button class="tab-btn" data-tab="loadouts" onclick="switchTab('loadouts')">LOADOUTS</button>
+        <button class="tab-btn" data-tab="log" onclick="switchTab('log')">AUDIT LOG</button>
+      </div>
+
+      <div id="tab-apps" class="tab-panel active"><div id="apps-container"><p class="empty">Loading...</p></div></div>
+
+      <div id="tab-announcements" class="tab-panel">
+        <div class="add-form">
+          <div class="full"><label>New announcement</label><input id="ann-message" type="text" placeholder="e.g. Tournament registrations are open"></div>
+          <button class="btn btn-gold" onclick="createAnnouncement()">POST ANNOUNCEMENT</button>
+        </div>
+        <div id="announcements-container"><p class="empty">Loading...</p></div>
+      </div>
+
+      <div id="tab-players" class="tab-panel">
+        <div class="add-form">
+          <div><label>IGN</label><input id="player-ign" type="text"></div>
+          <div><label>K/D</label><input id="player-kd" type="number" step="0.01"></div>
+          <div><label>Role</label><input id="player-role" type="text" placeholder="Slayer, Anchor..."></div>
+          <div><label>Wins</label><input id="player-wins" type="number"></div>
+          <div><label>Losses</label><input id="player-losses" type="number"></div>
+          <button class="btn btn-gold" onclick="createPlayer()">ADD PLAYER</button>
+        </div>
+        <div id="players-container"><p class="empty">Loading...</p></div>
+      </div>
+
+      <div id="tab-scrims" class="tab-panel">
+        <div class="add-form">
+          <div><label>Title</label><input id="scrim-title" type="text"></div>
+          <div><label>Mode</label><input id="scrim-mode" type="text" placeholder="SnD 5v5..."></div>
+          <div><label>Map pool</label><input id="scrim-maps" type="text"></div>
+          <div><label>Slots</label><input id="scrim-slots" type="number"></div>
+          <button class="btn btn-gold" onclick="createScrim()">ADD SCRIM</button>
+        </div>
+        <div id="scrims-container"><p class="empty">Loading...</p></div>
+      </div>
+
+      <div id="tab-loadouts" class="tab-panel">
+        <div class="add-form">
+          <div><label>Weapon</label><input id="loadout-weapon" type="text"></div>
+          <div><label>Build name</label><input id="loadout-build" type="text"></div>
+          <div><label>Share code</label><input id="loadout-code" type="text"></div>
+          <div class="full"><label>Attachments</label><input id="loadout-attachments" type="text" placeholder="Muzzle | Grip | Mag..."></div>
+          <button class="btn btn-gold" onclick="createLoadout()">ADD LOADOUT</button>
+        </div>
+        <div id="loadouts-container"><p class="empty">Loading...</p></div>
+      </div>
+
+      <div id="tab-log" class="tab-panel"><div id="log-container"><p class="empty">Loading...</p></div></div>
     </div>
   </div>
 
   <script>
     const API_BASE = 'https://codm-form-handler.lagang-keithlourencee.workers.dev';
-    let adminKey = sessionStorage.getItem('admin_key') || '';
+    let sessionToken = sessionStorage.getItem('admin_token') || '';
+    let currentUsername = sessionStorage.getItem('admin_username') || '';
+    const loadedTabs = new Set();
 
-    if (adminKey) showApp();
+    if (sessionToken) showApp();
 
-    function login() {
-      const val = document.getElementById('admin-key-input').value.trim();
-      if (!val) return;
-      adminKey = val;
-      sessionStorage.setItem('admin_key', val);
-      showApp();
+    async function login() {
+      const username = document.getElementById('username-input').value.trim();
+      const password = document.getElementById('password-input').value;
+      const errEl = document.getElementById('login-error');
+      errEl.textContent = '';
+      if (!username || !password) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/login`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Login failed.'; return; }
+        sessionToken = data.token; currentUsername = data.username;
+        sessionStorage.setItem('admin_token', sessionToken);
+        sessionStorage.setItem('admin_username', currentUsername);
+        showApp();
+      } catch (err) { errEl.textContent = 'Could not reach the server.'; }
     }
 
     function showApp() {
       document.getElementById('login-box').style.display = 'none';
       document.getElementById('app-view').style.display = 'block';
+      document.getElementById('who-username').textContent = currentUsername;
       loadApplications();
     }
 
-    function logout() {
-      sessionStorage.removeItem('admin_key');
+    async function logout() {
+      try {
+        await fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', headers: { 'Authorization': `Bearer ${sessionToken}` } });
+      } catch (err) {}
+      sessionStorage.removeItem('admin_token'); sessionStorage.removeItem('admin_username');
       location.reload();
     }
 
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      if (loadedTabs.has(tab)) return;
+      loadedTabs.add(tab);
+      if (tab === 'announcements') loadAnnouncements();
+      if (tab === 'players') loadPlayers();
+      if (tab === 'scrims') loadScrims();
+      if (tab === 'loadouts') loadLoadouts();
+      if (tab === 'log') loadAuditLog();
+    }
+
+    async function authedFetch(path, options = {}) {
+      const res = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers: { ...(options.headers || {}), 'Authorization': `Bearer ${sessionToken}` },
+      });
+      if (res.status === 401) {
+        sessionStorage.removeItem('admin_token'); sessionStorage.removeItem('admin_username');
+        document.getElementById('login-box').style.display = 'block';
+        document.getElementById('app-view').style.display = 'none';
+        document.getElementById('login-error').textContent = 'Session expired — please sign in again.';
+        throw new Error('unauthorized');
+      }
+      return res;
+    }
+
+    /* ---------- Applications ---------- */
     async function loadApplications() {
-      const container = document.getElementById('applications-container');
+      const c = document.getElementById('apps-container');
       try {
-        const res = await fetch(`${API_BASE}/api/admin/applications`, {
-          headers: { 'X-Admin-Key': adminKey },
-        });
-        if (res.status === 401) {
-          document.getElementById('login-error').textContent = 'Invalid admin key.';
-          sessionStorage.removeItem('admin_key');
-          document.getElementById('login-box').style.display = 'block';
-          document.getElementById('app-view').style.display = 'none';
-          return;
-        }
+        const res = await authedFetch('/api/admin/applications');
         const { applications } = await res.json();
-        if (!applications.length) {
-          container.innerHTML = '<p class="empty">No applications yet.</p>';
-          return;
-        }
-        container.innerHTML = applications.map(a => `
-          <div class="app-card">
-            <div class="app-info">
-              <div class="ign">${a.ign}</div>
+        if (!applications.length) { c.innerHTML = '<p class="empty">No applications yet.</p>'; return; }
+        c.innerHTML = applications.map(a => `
+          <div class="card row">
+            <div class="info">
+              <div class="title">${a.ign}</div>
               <div class="muted">Discord: ${a.discord} · Device: ${a.device || 'Unknown'} · UID: ${a.uid}</div>
               <div class="muted">${new Date(a.created_at).toLocaleString()}</div>
             </div>
@@ -107,28 +233,217 @@
               <span class="status-pill status-${a.status}">${a.status}</span>
               ${a.status === 'pending' ? `
                 <div class="actions">
-                  <button class="action-btn btn-accept" onclick="setStatus(${a.id}, 'accepted')">ACCEPT</button>
-                  <button class="action-btn btn-reject" onclick="setStatus(${a.id}, 'rejected')">REJECT</button>
+                  <button class="btn btn-ok" onclick="setAppStatus(${a.id}, 'accepted')">ACCEPT</button>
+                  <button class="btn btn-danger" onclick="setAppStatus(${a.id}, 'rejected')">REJECT</button>
                 </div>` : ''}
             </div>
           </div>`).join('');
-      } catch (err) {
-        container.innerHTML = '<p class="empty">Could not load applications.</p>';
-      }
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load applications.</p>'; }
+    }
+    async function setAppStatus(id, status) {
+      try {
+        await authedFetch(`/api/admin/applications/${id}/status`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }),
+        });
+        loadApplications();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not update status.'); }
     }
 
-    async function setStatus(id, status) {
+    /* ---------- Announcements ---------- */
+    async function loadAnnouncements() {
+      const c = document.getElementById('announcements-container');
       try {
-        const res = await fetch(`${API_BASE}/api/admin/applications/${id}/status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey },
-          body: JSON.stringify({ status }),
+        const res = await authedFetch('/api/admin/announcements');
+        const { announcements } = await res.json();
+        if (!announcements.length) { c.innerHTML = '<p class="empty">No announcements yet.</p>'; return; }
+        c.innerHTML = announcements.map(a => `
+          <div class="card row">
+            <div class="info">
+              <div class="title">${a.message}</div>
+              <div class="muted">${new Date(a.created_at).toLocaleString()}</div>
+            </div>
+            <div class="actions">
+              <span class="status-pill status-${a.active}">${a.active ? 'ACTIVE' : 'HIDDEN'}</span>
+              <button class="btn btn-outline" onclick="toggleAnnouncement(${a.id}, ${a.active ? 0 : 1})">${a.active ? 'HIDE' : 'SHOW'}</button>
+              <button class="btn btn-danger" onclick="deleteAnnouncement(${a.id})">DELETE</button>
+            </div>
+          </div>`).join('');
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load announcements.</p>'; }
+    }
+    async function createAnnouncement() {
+      const message = document.getElementById('ann-message').value.trim();
+      if (!message) return;
+      try {
+        await authedFetch('/api/admin/announcements', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, active: 1 }),
         });
-        if (!res.ok) throw new Error('Failed to update');
-        loadApplications();
-      } catch (err) {
-        alert('Could not update application status.');
-      }
+        document.getElementById('ann-message').value = '';
+        loadAnnouncements();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not post announcement.'); }
+    }
+    async function toggleAnnouncement(id, active) {
+      try {
+        await authedFetch(`/api/admin/announcements/${id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active }),
+        });
+        loadAnnouncements();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not update announcement.'); }
+    }
+    async function deleteAnnouncement(id) {
+      if (!confirm('Delete this announcement?')) return;
+      try {
+        await authedFetch(`/api/admin/announcements/${id}`, { method: 'DELETE' });
+        loadAnnouncements();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not delete announcement.'); }
+    }
+
+    /* ---------- Players / Leaderboard ---------- */
+    async function loadPlayers() {
+      const c = document.getElementById('players-container');
+      try {
+        const res = await authedFetch('/api/admin/players');
+        const { players } = await res.json();
+        if (!players.length) { c.innerHTML = '<p class="empty">No players yet.</p>'; return; }
+        c.innerHTML = players.map(p => `
+          <div class="card row">
+            <div class="info">
+              <div class="title">${p.ign} <span class="muted">— ${p.role || 'No role'}</span></div>
+              <div class="muted">
+                K/D <input class="editable" type="number" step="0.01" value="${p.kd}" onchange="updatePlayer(${p.id}, 'kd', this.value)">
+                W <input class="editable" type="number" value="${p.wins}" onchange="updatePlayer(${p.id}, 'wins', this.value)">
+                L <input class="editable" type="number" value="${p.losses}" onchange="updatePlayer(${p.id}, 'losses', this.value)">
+              </div>
+            </div>
+            <div class="actions">
+              <span class="status-pill status-${p.is_active}">${p.is_active ? 'ON BOARD' : 'HIDDEN'}</span>
+              <button class="btn btn-outline" onclick="updatePlayer(${p.id}, 'is_active', ${p.is_active ? 0 : 1}, true)">${p.is_active ? 'HIDE' : 'SHOW'}</button>
+              <button class="btn btn-danger" onclick="deletePlayer(${p.id})">DELETE</button>
+            </div>
+          </div>`).join('');
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load leaderboard.</p>'; }
+    }
+    async function createPlayer() {
+      const ign = document.getElementById('player-ign').value.trim();
+      if (!ign) return;
+      const body = {
+        ign,
+        kd: parseFloat(document.getElementById('player-kd').value) || 0,
+        role: document.getElementById('player-role').value.trim() || null,
+        wins: parseInt(document.getElementById('player-wins').value) || 0,
+        losses: parseInt(document.getElementById('player-losses').value) || 0,
+        is_active: 1,
+      };
+      try {
+        await authedFetch('/api/admin/players', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        ['player-ign','player-kd','player-role','player-wins','player-losses'].forEach(id => document.getElementById(id).value = '');
+        loadPlayers();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not add player.'); }
+    }
+    async function updatePlayer(id, field, value, reload) {
+      const body = { [field]: field === 'kd' ? parseFloat(value) : parseInt(value) };
+      try {
+        await authedFetch(`/api/admin/players/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (reload) loadPlayers();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not update player.'); }
+    }
+    async function deletePlayer(id) {
+      if (!confirm('Delete this player from the leaderboard?')) return;
+      try { await authedFetch(`/api/admin/players/${id}`, { method: 'DELETE' }); loadPlayers(); }
+      catch (err) { if (err.message !== 'unauthorized') alert('Could not delete player.'); }
+    }
+
+    /* ---------- Scrims ---------- */
+    async function loadScrims() {
+      const c = document.getElementById('scrims-container');
+      try {
+        const res = await authedFetch('/api/admin/scrims');
+        const { scrims } = await res.json();
+        if (!scrims.length) { c.innerHTML = '<p class="empty">No scrims yet.</p>'; return; }
+        c.innerHTML = scrims.map(s => `
+          <div class="card row">
+            <div class="info">
+              <div class="title">${s.title}</div>
+              <div class="muted">${s.mode || ''} · ${s.map_pool || ''} · ${s.filled}/${s.slots} filled</div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-danger" onclick="deleteScrim(${s.id})">DELETE</button>
+            </div>
+          </div>`).join('');
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load scrims.</p>'; }
+    }
+    async function createScrim() {
+      const title = document.getElementById('scrim-title').value.trim();
+      const slots = parseInt(document.getElementById('scrim-slots').value);
+      if (!title || !slots) { alert('Title and slots are required.'); return; }
+      const body = { title, mode: document.getElementById('scrim-mode').value.trim() || null, map_pool: document.getElementById('scrim-maps').value.trim() || null, slots };
+      try {
+        await authedFetch('/api/admin/scrims', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        ['scrim-title','scrim-mode','scrim-maps','scrim-slots'].forEach(id => document.getElementById(id).value = '');
+        loadScrims();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not add scrim.'); }
+    }
+    async function deleteScrim(id) {
+      if (!confirm('Delete this scrim and its RSVPs?')) return;
+      try { await authedFetch(`/api/admin/scrims/${id}`, { method: 'DELETE' }); loadScrims(); }
+      catch (err) { if (err.message !== 'unauthorized') alert('Could not delete scrim.'); }
+    }
+
+    /* ---------- Loadouts ---------- */
+    async function loadLoadouts() {
+      const c = document.getElementById('loadouts-container');
+      try {
+        const res = await authedFetch('/api/admin/loadouts');
+        const { loadouts } = await res.json();
+        if (!loadouts.length) { c.innerHTML = '<p class="empty">No loadouts yet.</p>'; return; }
+        c.innerHTML = loadouts.map(l => `
+          <div class="card row">
+            <div class="info">
+              <div class="title">${l.weapon} — ${l.build_name}</div>
+              <div class="muted">${l.share_code || ''} · ${l.attachments || ''} · ${l.votes} votes</div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-outline" onclick="toggleMetaVerified(${l.id}, ${l.meta_verified ? 0 : 1})">${l.meta_verified ? 'UNVERIFY' : 'VERIFY META'}</button>
+              <button class="btn btn-danger" onclick="deleteLoadout(${l.id})">DELETE</button>
+            </div>
+          </div>`).join('');
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load loadouts.</p>'; }
+    }
+    async function createLoadout() {
+      const weapon = document.getElementById('loadout-weapon').value.trim();
+      const build_name = document.getElementById('loadout-build').value.trim();
+      if (!weapon || !build_name) { alert('Weapon and build name are required.'); return; }
+      const body = { weapon, build_name, share_code: document.getElementById('loadout-code').value.trim() || null, attachments: document.getElementById('loadout-attachments').value.trim() || null };
+      try {
+        await authedFetch('/api/admin/loadouts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        ['loadout-weapon','loadout-build','loadout-code','loadout-attachments'].forEach(id => document.getElementById(id).value = '');
+        loadLoadouts();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not add loadout.'); }
+    }
+    async function toggleMetaVerified(id, val) {
+      try {
+        await authedFetch(`/api/admin/loadouts/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ meta_verified: val }) });
+        loadLoadouts();
+      } catch (err) { if (err.message !== 'unauthorized') alert('Could not update loadout.'); }
+    }
+    async function deleteLoadout(id) {
+      if (!confirm('Delete this loadout?')) return;
+      try { await authedFetch(`/api/admin/loadouts/${id}`, { method: 'DELETE' }); loadLoadouts(); }
+      catch (err) { if (err.message !== 'unauthorized') alert('Could not delete loadout.'); }
+    }
+
+    /* ---------- Audit log ---------- */
+    async function loadAuditLog() {
+      const c = document.getElementById('log-container');
+      try {
+        const res = await authedFetch('/api/admin/audit-log');
+        const { log } = await res.json();
+        if (!log.length) { c.innerHTML = '<p class="empty">No activity yet.</p>'; return; }
+        c.innerHTML = log.map(l => `
+          <div class="log-row">
+            ${new Date(l.created_at).toLocaleString()} — <span>${l.admin_username || 'system'}</span>
+            ${l.action}${l.target ? ' → ' + l.target : ''}${l.detail ? ' (' + l.detail + ')' : ''}
+          </div>`).join('');
+      } catch (err) { if (err.message !== 'unauthorized') c.innerHTML = '<p class="empty">Could not load audit log.</p>'; }
     }
   </script>
 </body>
